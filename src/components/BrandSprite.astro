@@ -1,0 +1,11 @@
+---
+import { siWhatsapp, siGithub, siFacebook, siInstagram, siTiktok } from 'simple-icons';
+
+const marcas = { whatsapp: siWhatsapp, github: siGithub, facebook: siFacebook, instagram: siInstagram, tiktok: siTiktok };
+---
+
+<svg width="0" height="0" style="position: absolute" aria-hidden="true">
+  {Object.entries(marcas).map(([nombre, icono]) => (
+    <symbol id={`marca-${nombre}`} viewBox="0 0 24 24"><path d={icono.path} /></symbol>
+  ))}
+</svg>

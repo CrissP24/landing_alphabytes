@@ -1,0 +1,47 @@
+ALPHABYTES — KIT DE LOGOS
+=========================
+
+COLORES
+  Índigo  #5B4BFF   (color principal)
+  Lima    #C6F432   (acento)
+  Tinta   #0B0F1A   (fondos oscuros y texto)
+  Blanco  #FFFFFF
+
+TIPOGRAFÍAS (gratuitas, en Google Fonts)
+  Space Grotesk Bold  -> logotipo y títulos
+  JetBrains Mono      -> eslogan y detalles técnicos
+  (En los archivos SVG y PNG el texto ya está convertido a trazos:
+   se ven igual aunque no tengas las fuentes instaladas.)
+
+CARPETAS
+  svg/             Todos los logos en vector. Úsalos en tu web y para imprimir
+                   (escalan sin perder calidad).
+  png/             Los mismos logos con fondo transparente, en 3–4 tamaños.
+  web-favicon/     Íconos para la pestaña del navegador y celulares.
+                   Sube estos archivos a la raíz de tu sitio y pega el
+                   contenido de "codigo-para-tu-web.html" dentro del <head>.
+  redes-sociales/  Foto de perfil, publicaciones, historia y portadas con
+                   las medidas de cada red.
+
+FORMATOS DEL LOGO
+  horizontal          Isotipo + nombre en una línea (encabezado de la web).
+  horizontal-eslogan  Igual, con "DESARROLLO DE SOFTWARE".
+  vertical            Isotipo arriba, nombre abajo (espacios cuadrados).
+  vertical-eslogan    Igual, con eslogan.
+  isotipo             Solo la α (perfil, ícono de app, sello).
+  logotipo            Solo el nombre "alphabytes".
+
+VERSIONES DE COLOR (en qué fondo usar cada una)
+  color         Fondos blancos o claros.
+  negativo      Fondos oscuros (tinta, negro, fotos oscuras).
+  sobre-indigo  Fondos índigo o de color intenso.
+  sobre-lima    Fondos lima o claros y brillantes.
+  negro         Una sola tinta negra (sellos, documentos, impresión B/N).
+  blanco        Una sola tinta blanca sobre fotos o fondos de color.
+
+REGLAS RÁPIDAS
+  - Deja alrededor del logo un espacio libre al menos igual a la mitad
+    del isotipo.
+  - No estires, no rotes ni cambies los colores del logo.
+  - Tamaño mínimo: 24 px de alto en pantalla (usa el isotipo si es más
+    pequeño).

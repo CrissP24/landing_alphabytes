@@ -1,0 +1,62 @@
+---
+import { TESTIMONIOS } from '../data/site';
+---
+
+{TESTIMONIOS.length > 0 && (
+  <section class="seccion testimonios-seccion" id="testimonios" aria-labelledby="testimonios-titulo">
+    <div class="contenedor">
+      <header class="cabecera revelar">
+        <p class="etiqueta">// Testimonios</p>
+        <h2 id="testimonios-titulo">Lo que dicen <span class="acento">nuestros clientes</span></h2>
+      </header>
+      <ul class="testimonios">
+        {TESTIMONIOS.map((t, i) => (
+          <li class="revelar" style={`--retraso: ${i * 0.08}s`}>
+            <blockquote>“{t.texto}”</blockquote>
+            <p><strong>{t.nombre}</strong>{t.cargo && <span>{t.cargo}</span>}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}
+
+<style>
+  .testimonios {
+    display: grid;
+    gap: 20px;
+  }
+
+  .testimonios-seccion {
+    border-top: 1px solid var(--borde);
+  }
+
+  .testimonios li {
+    padding: 28px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-l);
+    background: var(--tinta-2);
+  }
+
+  blockquote {
+    margin: 0;
+    font-size: 17px;
+    color: var(--niebla);
+  }
+
+  .testimonios p {
+    display: grid;
+    margin-top: 20px;
+    font-size: 15px;
+  }
+
+  .testimonios p span {
+    color: var(--gris);
+  }
+
+  @media (min-width: 768px) {
+    .testimonios {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+  }
+</style>

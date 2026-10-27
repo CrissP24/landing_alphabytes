@@ -1,0 +1,136 @@
+---
+import WaButton from './WaButton.astro';
+import { PREGUNTAS } from '../data/site';
+
+const preguntas = PREGUNTAS.filter((p) => p.respuesta.trim());
+---
+
+<section class="seccion seccion--alt" id="preguntas" aria-labelledby="preguntas-titulo">
+  <div class="contenedor faq">
+    <header class="cabecera revelar">
+      <p class="etiqueta">// 05 · Preguntas</p>
+      <h2 id="preguntas-titulo">Preguntas <span class="acento">frecuentes</span></h2>
+      <p>Si tu duda no está aquí, escríbenos. Respondemos en nuestro horario de atención.</p>
+      <WaButton clave="general" variante="borde" tam="sm">Hacer otra pregunta</WaButton>
+    </header>
+
+    <div class="faq__lista">
+      {preguntas.map((p, i) => (
+        <details class="revelar" style={`--retraso: ${i * 0.05}s`} name="faq">
+          <summary>
+            <span>{p.pregunta}</span>
+            <span class="faq__mas" aria-hidden="true"></span>
+          </summary>
+          <p>{p.respuesta}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq {
+    display: grid;
+    gap: 16px;
+  }
+
+  .faq .cabecera :global(.btn) {
+    margin-top: 28px;
+  }
+
+  .faq__lista {
+    display: grid;
+    gap: 12px;
+  }
+
+  details {
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    background: var(--tinta);
+    transition: border-color 0.25s;
+  }
+
+  details[open],
+  details:hover {
+    border-color: #343e63;
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 22px;
+    font-size: 17.5px;
+    font-weight: 500;
+    color: var(--blanco);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary:focus-visible {
+    border-radius: var(--radio);
+  }
+
+  .faq__mas {
+    position: relative;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--tinta-3);
+    transition:
+      background-color 0.25s,
+      rotate 0.3s var(--ease);
+  }
+
+  .faq__mas::before,
+  .faq__mas::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 2px;
+    margin: -1px 0 0 -6px;
+    border-radius: 2px;
+    background: var(--lima);
+    transition: background-color 0.25s;
+  }
+
+  .faq__mas::after {
+    rotate: 90deg;
+  }
+
+  details[open] .faq__mas {
+    rotate: 45deg;
+    background: var(--lima);
+  }
+
+  details[open] .faq__mas::before,
+  details[open] .faq__mas::after {
+    background: var(--tinta);
+  }
+
+  details p {
+    padding: 0 22px 22px;
+    color: var(--gris);
+  }
+
+  @media (min-width: 1024px) {
+    .faq {
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .faq .cabecera {
+      position: sticky;
+      top: calc(var(--header) + 32px);
+    }
+  }
+</style>

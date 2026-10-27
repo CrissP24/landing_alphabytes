@@ -1,0 +1,262 @@
+---
+import Icon from './Icon.astro';
+import WaButton from './WaButton.astro';
+import { asset } from '../lib/url';
+
+const enlaces = [
+  { id: 'servicios', texto: 'Servicios' },
+  { id: 'proceso', texto: 'Proceso' },
+  { id: 'proyectos', texto: 'Proyectos' },
+  { id: 'nosotros', texto: 'Nosotros' },
+  { id: 'preguntas', texto: 'Preguntas' },
+  { id: 'contacto', texto: 'Contacto' },
+];
+---
+
+<header class="header" id="header">
+  <div class="contenedor header__fila">
+    <a href="#inicio" class="header__logo" aria-label="AlphaBytes, ir al inicio">
+      <img src={asset('logos/alphabytes-horizontal-negativo.svg')} alt="AlphaBytes" width="176" height="40" />
+    </a>
+
+    <nav class="nav" aria-label="Principal">
+      <ul class="nav__lista">
+        {enlaces.map((e) => (
+          <li><a href={`#${e.id}`} class="nav__enlace" data-seccion={e.id}>{e.texto}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="header__acciones">
+      <WaButton clave="cotizacion" tam="sm" class="header__cta">Cotizar</WaButton>
+      <button
+        class="header__menu"
+        type="button"
+        aria-expanded="false"
+        aria-controls="menu-movil"
+        aria-label="Abrir menú"
+      >
+        <Icon name="menu" class="icono-abrir" />
+        <Icon name="x" class="icono-cerrar" />
+      </button>
+    </div>
+  </div>
+
+  <div class="movil" id="menu-movil" hidden>
+    <nav aria-label="Menú móvil">
+      <ul>
+        {enlaces.map((e, i) => (
+          <li>
+            <a href={`#${e.id}`} class="movil__enlace">
+              <span class="movil__num">{String(i + 1).padStart(2, '0')}</span>
+              {e.texto}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <WaButton clave="cotizacion" bloque>Cotizar por WhatsApp</WaButton>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: var(--header);
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color 0.3s,
+      border-color 0.3s,
+      backdrop-filter 0.3s;
+  }
+
+  .header.con-fondo,
+  .header.abierto {
+    background: rgb(11 15 26 / 0.82);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-color: var(--borde);
+  }
+
+  .header__fila {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .header__logo img {
+    height: 34px;
+    width: auto;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .nav__lista {
+    display: flex;
+    gap: 4px;
+  }
+
+  .nav__enlace {
+    position: relative;
+    display: block;
+    padding: 8px 14px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--gris);
+    transition: color 0.2s;
+  }
+
+  .nav__enlace::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 1px;
+    background: var(--lima);
+    transform: translateX(-50%) scale(0);
+    transition: transform 0.25s var(--ease);
+  }
+
+  .nav__enlace:hover,
+  .nav__enlace.activo {
+    color: var(--blanco);
+  }
+
+  .nav__enlace.activo::after {
+    transform: translateX(-50%) scale(1);
+  }
+
+  .header__acciones {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header__cta {
+    display: none;
+  }
+
+  .header__menu {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-s);
+    background: var(--tinta-2);
+  }
+
+  .header__menu :global(.icono-cerrar),
+  .abierto :global(.icono-abrir) {
+    display: none;
+  }
+
+  .abierto :global(.icono-cerrar) {
+    display: block;
+  }
+
+  .movil {
+    position: fixed;
+    inset: var(--header) 0 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 32px;
+    padding: 24px var(--gutter) 32px;
+    background: var(--tinta);
+    overflow-y: auto;
+  }
+
+  .movil[hidden] {
+    display: none;
+  }
+
+  .movil__enlace {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--borde);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--blanco);
+  }
+
+  .movil__num {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--lima);
+  }
+
+  @media (min-width: 560px) {
+    .header__cta {
+      display: inline-flex;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .nav {
+      display: block;
+    }
+
+    .header__menu,
+    .movil {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  const header = document.getElementById('header')!;
+  const boton = header.querySelector<HTMLButtonElement>('.header__menu')!;
+  const panel = document.getElementById('menu-movil')!;
+
+  const alScroll = () => header.classList.toggle('con-fondo', window.scrollY > 12);
+  alScroll();
+  window.addEventListener('scroll', alScroll, { passive: true });
+
+  function menu(abrir: boolean) {
+    boton.setAttribute('aria-expanded', String(abrir));
+    boton.setAttribute('aria-label', abrir ? 'Cerrar menú' : 'Abrir menú');
+    header.classList.toggle('abierto', abrir);
+    panel.hidden = !abrir;
+    document.body.classList.toggle('bloqueado', abrir);
+    if (abrir) panel.querySelector('a')?.focus();
+  }
+
+  boton.addEventListener('click', () => menu(boton.getAttribute('aria-expanded') !== 'true'));
+  panel.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a')) menu(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !panel.hidden) {
+      menu(false);
+      boton.focus();
+    }
+  });
+  matchMedia('(min-width: 1024px)').addEventListener('change', (e) => e.matches && menu(false));
+
+  const enlaces = new Map(
+    [...document.querySelectorAll<HTMLAnchorElement>('.nav__enlace')].map((a) => [a.dataset.seccion, a]),
+  );
+  const observador = new IntersectionObserver(
+    (entradas) => {
+      for (const entrada of entradas) {
+        if (!entrada.isIntersecting) continue;
+        enlaces.forEach((a) => a.classList.remove('activo'));
+        enlaces.get(entrada.target.id)?.classList.add('activo');
+      }
+    },
+    { rootMargin: '-45% 0px -50% 0px' },
+  );
+  document.querySelectorAll('main section[id]').forEach((s) => observador.observe(s));
+</script>

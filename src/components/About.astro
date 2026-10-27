@@ -1,0 +1,130 @@
+---
+import Icon from './Icon.astro';
+import WaButton from './WaButton.astro';
+import { SITE, VENTAJAS } from '../data/site';
+---
+
+<section class="seccion" id="nosotros" aria-labelledby="nosotros-titulo">
+  <div class="contenedor nosotros">
+    <div class="nosotros__intro revelar">
+      <p class="etiqueta">// 04 · Nosotros</p>
+      <h2 id="nosotros-titulo">Tecnología seria, <span class="acento">trato cercano</span></h2>
+      <p>
+        AlphaBytes es un equipo de desarrollo de software con base en {SITE.ciudad}, {SITE.provincia}. Creamos
+        páginas web, aplicaciones y sistemas a medida, y damos soporte técnico a empresas, emprendedores y hogares
+        de todo {SITE.pais}.
+      </p>
+      <p>
+        Nuestro objetivo es simple: que la tecnología deje de ser un problema y se convierta en una herramienta
+        que te ayude a vender más y trabajar mejor.
+      </p>
+      {SITE.aniosExperiencia && (
+        <p class="nosotros__dato"><strong>{SITE.aniosExperiencia}</strong> años de experiencia</p>
+      )}
+      <WaButton clave="general">Conversemos sobre tu idea</WaButton>
+    </div>
+
+    <ul class="ventajas">
+      {VENTAJAS.map((v, i) => (
+        <li class="ventaja revelar" style={`--retraso: ${i * 0.08}s`}>
+          <span class="ventaja__icono"><Icon name={v.icono} size={24} /></span>
+          <h3>{v.titulo}</h3>
+          <p>{v.texto}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .nosotros {
+    display: grid;
+    gap: 48px;
+  }
+
+  .nosotros__intro h2 {
+    margin-top: 16px;
+    font-size: clamp(32px, 5vw, 48px);
+  }
+
+  .nosotros__intro p:not(.etiqueta) {
+    margin-top: 18px;
+    color: var(--gris);
+    font-size: 17.5px;
+  }
+
+  .nosotros__intro :global(.btn) {
+    margin-top: 32px;
+  }
+
+  .nosotros__dato strong {
+    font-size: 32px;
+    color: var(--lima);
+  }
+
+  .ventajas {
+    display: grid;
+    gap: 16px;
+  }
+
+  .ventaja {
+    position: relative;
+    padding: 26px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-l);
+    background: var(--tinta-2);
+    transition:
+      translate 0.35s var(--ease),
+      border-color 0.35s;
+  }
+
+  .ventaja:hover {
+    translate: 0 -4px;
+    border-color: #343e63;
+  }
+
+  .ventaja__icono {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: var(--indigo);
+    color: var(--blanco);
+  }
+
+  .ventaja:nth-child(even) .ventaja__icono {
+    background: var(--lima);
+    color: var(--tinta);
+  }
+
+  .ventaja h3 {
+    margin-top: 18px;
+    font-size: 19px;
+  }
+
+  .ventaja p {
+    margin-top: 8px;
+    color: var(--gris);
+    font-size: 15.5px;
+  }
+
+  @media (min-width: 680px) {
+    .ventajas {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .nosotros {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 72px;
+      align-items: center;
+    }
+
+    .ventaja:nth-child(even) {
+      margin-top: 32px;
+      margin-bottom: -32px;
+    }
+  }
+</style>

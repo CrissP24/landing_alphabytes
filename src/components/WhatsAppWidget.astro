@@ -1,0 +1,262 @@
+---
+import Icon from './Icon.astro';
+import { ACCESOS_RAPIDOS, MENSAJES, SITE, waLink } from '../data/site';
+---
+
+<div class="wa">
+  <div class="wa__panel" id="wa-panel" role="dialog" aria-modal="false" aria-labelledby="wa-titulo" hidden>
+    <div class="wa__cabecera">
+      <svg viewBox="0 0 100 100" width="40" height="40" aria-hidden="true">
+        <rect width="100" height="100" rx="24" fill="#5B4BFF"></rect>
+        <path d="M71 30 C64 54 57 71 42 71 C30 71 25 62 25 51 C25 39 32 31 43 31 C56 31 61 55 74 71" fill="none" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke="#FFFFFF"></path>
+        <rect x="76" y="19" width="10" height="10" rx="2" fill="#C6F432"></rect>
+      </svg>
+      <div>
+        <p class="wa__titulo" id="wa-titulo">AlphaBytes</p>
+        <p class="wa__estado">Atendemos de {SITE.horario.replace('–', 'a')}</p>
+      </div>
+      <button type="button" class="wa__cerrar" aria-label="Cerrar panel de WhatsApp">
+        <Icon name="x" size={20} />
+      </button>
+    </div>
+    <div class="wa__cuerpo">
+      <p class="wa__burbuja">Hola 👋 ¿En qué podemos ayudarte? Elige una opción y te respondemos por WhatsApp.</p>
+      <ul>
+        {ACCESOS_RAPIDOS.map((a) => (
+          <li>
+            <a href={waLink(MENSAJES[a.clave])} target="_blank" rel="noopener" data-wa={a.clave}>
+              {a.texto}
+              <Icon name="arrow" size={16} />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  <button type="button" class="wa__boton" aria-expanded="false" aria-controls="wa-panel" aria-label="Abrir chat de WhatsApp">
+    <Icon name="whatsapp" size={30} class="wa__ico-abrir" />
+    <Icon name="x" size={26} class="wa__ico-cerrar" />
+  </button>
+</div>
+
+<style>
+  .wa {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 60;
+  }
+
+  .wa__boton {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--whatsapp);
+    color: var(--blanco);
+    box-shadow: 0 12px 30px -8px rgb(37 211 102 / 0.55);
+    transition:
+      transform 0.25s var(--ease),
+      background-color 0.25s;
+  }
+
+  .wa__boton::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--whatsapp);
+    z-index: -1;
+    animation: pulso 4s ease-out infinite;
+  }
+
+  .wa__boton:hover {
+    transform: scale(1.06);
+    background: var(--whatsapp-oscuro);
+  }
+
+  .wa__boton :global(.wa__ico-cerrar),
+  .wa__boton[aria-expanded='true'] :global(.wa__ico-abrir) {
+    display: none;
+  }
+
+  .wa__boton[aria-expanded='true'] :global(.wa__ico-cerrar) {
+    display: block;
+  }
+
+  .wa__boton[aria-expanded='true']::before {
+    animation: none;
+  }
+
+  .wa__panel {
+    position: absolute;
+    right: 0;
+    bottom: 76px;
+    width: min(340px, calc(100vw - 40px));
+    overflow: hidden;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-l);
+    background: var(--tinta-2);
+    box-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.75);
+    transform-origin: bottom right;
+    animation: abrir 0.3s var(--ease);
+  }
+
+  .wa__panel[hidden] {
+    display: none;
+  }
+
+  .wa__cabecera {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 16px 16px 18px;
+    background: var(--tinta-3);
+  }
+
+  .wa__titulo {
+    font-weight: 700;
+    color: var(--blanco);
+  }
+
+  .wa__estado {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--gris);
+  }
+
+  .wa__estado::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    background: var(--whatsapp);
+  }
+
+  .wa__cerrar {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    margin-left: auto;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--gris);
+  }
+
+  .wa__cerrar:hover {
+    background: var(--tinta-2);
+    color: var(--blanco);
+  }
+
+  .wa__cuerpo {
+    padding: 18px;
+  }
+
+  .wa__burbuja {
+    padding: 12px 14px;
+    border-radius: 4px 14px 14px 14px;
+    background: var(--tinta-3);
+    font-size: 14.5px;
+  }
+
+  .wa__cuerpo ul {
+    display: grid;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .wa__cuerpo a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 14px;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    transition:
+      border-color 0.2s,
+      background-color 0.2s,
+      color 0.2s;
+  }
+
+  .wa__cuerpo a :global(svg) {
+    color: var(--gris);
+    transition:
+      color 0.2s,
+      translate 0.2s;
+  }
+
+  .wa__cuerpo a:hover {
+    border-color: var(--whatsapp);
+    background: rgb(37 211 102 / 0.08);
+  }
+
+  .wa__cuerpo a:hover :global(svg) {
+    color: var(--whatsapp);
+    translate: 3px 0;
+  }
+
+  @keyframes pulso {
+    0% {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    30%,
+    100% {
+      transform: scale(1.6);
+      opacity: 0;
+    }
+  }
+
+  @keyframes abrir {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.96);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .wa {
+      right: 28px;
+      bottom: 28px;
+    }
+  }
+</style>
+
+<script>
+  const boton = document.querySelector<HTMLButtonElement>('.wa__boton')!;
+  const panel = document.getElementById('wa-panel')!;
+  const cerrar = panel.querySelector<HTMLButtonElement>('.wa__cerrar')!;
+
+  function alternar(abrir: boolean, devolverFoco = false) {
+    panel.hidden = !abrir;
+    boton.setAttribute('aria-expanded', String(abrir));
+    boton.setAttribute('aria-label', abrir ? 'Cerrar chat de WhatsApp' : 'Abrir chat de WhatsApp');
+    if (abrir) panel.querySelector<HTMLAnchorElement>('a')?.focus();
+    else if (devolverFoco) boton.focus();
+  }
+
+  boton.addEventListener('click', () => alternar(panel.hidden));
+  cerrar.addEventListener('click', () => alternar(false, true));
+  panel.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a')) alternar(false);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !panel.hidden) alternar(false, true);
+  });
+
+  document.addEventListener('click', (e) => {
+    const t = e.target as Node;
+    if (!panel.hidden && !panel.contains(t) && !boton.contains(t)) alternar(false);
+  });
+</script>

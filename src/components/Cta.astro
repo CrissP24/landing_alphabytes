@@ -1,0 +1,79 @@
+---
+import WaButton from './WaButton.astro';
+---
+
+<section class="cta-final" aria-labelledby="cta-titulo">
+  <div class="contenedor">
+    <div class="cta revelar">
+      <span class="pixel" style="top: 28px; right: 32px;"></span>
+      <span class="pixel" style="top: 52px; right: 56px; width: 6px; height: 6px;"></span>
+      <span class="pixel" style="bottom: 36px; left: 36px; width: 14px; height: 14px; background: #fff; opacity: 0.25;"></span>
+      <p class="cta__etiqueta">// ¿Listo para empezar?</p>
+      <h2 id="cta-titulo">¿Tienes un proyecto en mente? <span>Hablemos hoy.</span></h2>
+      <WaButton clave="general" variante="blanco">Escríbenos por WhatsApp</WaButton>
+      <p class="cta__nota">Respuesta rápida · Cotización sin compromiso</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-final {
+    padding: var(--seccion) 0;
+  }
+
+  .cta {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(48px, 8vw, 88px) clamp(24px, 6vw, 72px);
+    border-radius: clamp(20px, 3vw, 32px);
+    background: var(--indigo);
+    text-align: center;
+  }
+
+  .cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.07) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse at center, transparent 30%, #000 90%);
+    -webkit-mask-image: radial-gradient(ellipse at center, transparent 30%, #000 90%);
+  }
+
+  .cta > * {
+    position: relative;
+  }
+
+  .cta > .pixel {
+    position: absolute;
+  }
+
+  .cta__etiqueta {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--lima);
+  }
+
+  .cta h2 {
+    max-width: 780px;
+    margin: 18px auto 36px;
+    font-size: clamp(32px, 5.5vw, 56px);
+    line-height: 1.08;
+  }
+
+  .cta h2 span {
+    color: var(--lima);
+  }
+
+  .cta__nota {
+    margin-top: 20px;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: rgb(255 255 255 / 0.9);
+  }
+</style>

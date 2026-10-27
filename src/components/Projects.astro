@@ -1,0 +1,540 @@
+---
+import Icon from './Icon.astro';
+import WaButton from './WaButton.astro';
+import { SITE, MENSAJES, waLink } from '../data/site';
+import { PROYECTOS, CATEGORIAS } from '../data/proyectos';
+
+const VISIBLES = 9;
+const categorias = CATEGORIAS.filter((c) => PROYECTOS.some((p) => p.categoria === c));
+const pedirDemo = (nombre: string) => waLink(MENSAJES.demo.replace('[NOMBRE]', nombre));
+const dominio = (url: string) => new URL(url).hostname.replace(/^www\./, '');
+---
+
+<section class="seccion seccion--alt" id="proyectos" aria-labelledby="proyectos-titulo">
+  <div class="contenedor">
+    <header class="cabecera revelar">
+      <p class="etiqueta">// 03 · Portafolio</p>
+      <h2 id="proyectos-titulo">Proyectos que <span class="acento">hablan por nosotros</span></h2>
+      <p>
+        Sistemas reales para municipios, centros de salud, instituciones educativas y negocios. Abre la ficha de cada
+        uno para ver qué hace y qué incluye.
+      </p>
+    </header>
+
+    <div class="filtros revelar" role="group" aria-label="Filtrar proyectos por categoría">
+      <button type="button" aria-pressed="true" data-filtro="todos">Todos <span>{PROYECTOS.length}</span></button>
+      {categorias.map((c) => (
+        <button type="button" aria-pressed="false" data-filtro={c}>
+          {c} <span>{PROYECTOS.filter((p) => p.categoria === c).length}</span>
+        </button>
+      ))}
+    </div>
+
+    <ul class="proyectos">
+      {PROYECTOS.map((p, i) => (
+        <li class="proyecto" data-categoria={p.categoria} data-extra={i >= VISIBLES ? '' : undefined}>
+          <div class="proyecto__top">
+            <span class="proyecto__cat">{p.categoria}</span>
+            <span class:list={['proyecto__estado', !p.demo && 'proyecto__estado--privado']}>
+              <i></i>{p.demo ? 'Demo en línea' : 'Demo bajo solicitud'}
+            </span>
+          </div>
+          <h3>{p.nombre}</h3>
+          <p class="proyecto__resumen">{p.resumen}</p>
+          <ul class="proyecto__tec" aria-label="Tecnologías">
+            {p.tecnologias.slice(0, 4).map((t) => <li>{t}</li>)}
+            {p.tecnologias.length > 4 && <li>+{p.tecnologias.length - 4}</li>}
+          </ul>
+          <div class="proyecto__acciones">
+            <button type="button" class="btn btn--borde btn--sm" data-ficha={p.id} aria-haspopup="dialog">
+              <Icon name="folder" size={16} /> Ver ficha
+            </button>
+            {p.demo && !p.privado ? (
+              <a class="btn btn--indigo btn--sm" href={p.demo} target="_blank" rel="noopener" aria-label={`Ver demo de ${p.nombre}`}>
+                <Icon name="external" size={16} /> Ver demo
+              </a>
+            ) : (
+              <a class="btn btn--wa btn--sm" href={pedirDemo(p.nombre)} target="_blank" rel="noopener" data-wa="demo" data-proyecto={p.nombre} aria-label={`Pedir demo de ${p.nombre} por WhatsApp`}>
+                <Icon name="whatsapp" size={16} /> Pedir demo
+              </a>
+            )}
+          </div>
+        </li>
+      ))}
+    </ul>
+
+    {PROYECTOS.length > VISIBLES && (
+      <div class="proyectos__mas">
+        <button type="button" class="btn btn--borde" id="ver-mas" aria-expanded="false">
+          Ver {PROYECTOS.length - VISIBLES} proyectos más
+        </button>
+      </div>
+    )}
+
+    <div class="proyectos__acciones revelar">
+      <p>¿Necesitas algo parecido para tu negocio o institución?</p>
+      <div>
+        <a class="btn btn--borde" href={SITE.github} target="_blank" rel="noopener">
+          <Icon name="github" size={20} /> Ver GitHub
+        </a>
+        <WaButton clave="cotizacion">Quiero un proyecto así</WaButton>
+      </div>
+    </div>
+  </div>
+
+  {PROYECTOS.map((p) => (
+    <dialog class="ficha" id={`ficha-${p.id}`} aria-labelledby={`ficha-${p.id}-titulo`}>
+      <div class="ficha__cabecera">
+        <div>
+          <p class="ficha__cat">{p.categoria}</p>
+          <h3 id={`ficha-${p.id}-titulo`}>{p.nombre}</h3>
+        </div>
+        <button type="button" class="ficha__cerrar" aria-label="Cerrar ficha" data-cerrar>
+          <Icon name="x" size={20} />
+        </button>
+      </div>
+
+      <div class="ficha__cuerpo">
+        <section>
+          <h4>// Qué es</h4>
+          <p>{p.descripcion}</p>
+        </section>
+        <section>
+          <h4>// Para quién</h4>
+          <p>{p.paraQuien}</p>
+        </section>
+        <section>
+          <h4>// Qué incluye</h4>
+          <ul class="ficha__lista">
+            {p.incluye.map((x) => (
+              <li><Icon name="check" size={16} />{x}</li>
+            ))}
+          </ul>
+        </section>
+        <section>
+          <h4>// Tecnologías</h4>
+          <ul class="ficha__tec">
+            {p.tecnologias.map((t) => <li>{t}</li>)}
+          </ul>
+        </section>
+        <section>
+          <h4>// Demo</h4>
+          <p>
+            {p.demo && !p.privado
+              ? <>Disponible en línea en <strong>{dominio(p.demo)}</strong>. Si tiene acceso con usuario, pídenos las credenciales de prueba.</>
+              : 'Este proyecto se presenta bajo solicitud. Escríbenos y te mostramos una demo guiada por videollamada o en persona.'}
+          </p>
+        </section>
+      </div>
+
+      <div class="ficha__pie">
+        {p.demo && !p.privado ? (
+          <a class="btn btn--indigo btn--sm" href={p.demo} target="_blank" rel="noopener">
+            <Icon name="external" size={16} /> Ver demo
+          </a>
+        ) : (
+          <a class="btn btn--wa btn--sm" href={pedirDemo(p.nombre)} target="_blank" rel="noopener" data-wa="demo" data-proyecto={p.nombre}>
+            <Icon name="whatsapp" size={16} /> Pedir demo
+          </a>
+        )}
+        {p.codigo && !p.privado && (
+          <a class="btn btn--borde btn--sm" href={p.codigo} target="_blank" rel="noopener">
+            <Icon name="code" size={16} /> Código
+          </a>
+        )}
+        <a class="ficha__similar" href={waLink(MENSAJES.proyecto.replace('[NOMBRE]', p.nombre))} target="_blank" rel="noopener" data-wa="proyecto" data-proyecto={p.nombre}>
+          <Icon name="whatsapp" size={16} /> Quiero algo similar
+        </a>
+      </div>
+    </dialog>
+  ))}
+</section>
+
+<style>
+  .filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+
+  .filtros button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid var(--borde);
+    border-radius: 999px;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gris);
+    transition:
+      border-color 0.2s,
+      color 0.2s,
+      background-color 0.2s;
+  }
+
+  .filtros button span {
+    font-family: var(--mono);
+    font-size: 11px;
+    opacity: 0.8;
+  }
+
+  .filtros button:hover {
+    border-color: var(--lima);
+    color: var(--lima);
+  }
+
+  .filtros button[aria-pressed='true'] {
+    border-color: var(--lima);
+    background: var(--lima);
+    color: var(--tinta);
+  }
+
+  .proyectos {
+    display: grid;
+    gap: 20px;
+  }
+
+  .proyecto {
+    display: flex;
+    flex-direction: column;
+    padding: 26px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-l);
+    background: var(--tinta);
+    animation: entrar 0.45s var(--ease) both;
+    transition:
+      translate 0.35s var(--ease),
+      border-color 0.35s,
+      box-shadow 0.35s;
+  }
+
+  .proyecto[hidden],
+  .proyectos:not(.todos) .proyecto[data-extra] {
+    display: none;
+  }
+
+  .proyecto:hover {
+    translate: 0 -6px;
+    border-color: #343e63;
+    box-shadow: var(--sombra);
+  }
+
+  .proyecto__top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .proyecto__cat {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--lima);
+  }
+
+  .proyecto__estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--gris);
+  }
+
+  .proyecto__estado i {
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    background: var(--whatsapp);
+  }
+
+  .proyecto__estado--privado i {
+    background: var(--indigo-claro);
+  }
+
+  .proyecto h3 {
+    margin-top: 16px;
+    font-size: 20px;
+  }
+
+  .proyecto__resumen {
+    margin-top: 10px;
+    color: var(--gris);
+    font-size: 15px;
+  }
+
+  .proyecto__tec {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 18px 0 22px;
+  }
+
+  .proyecto__tec li,
+  .ficha__tec li {
+    padding: 4px 9px;
+    border-radius: 6px;
+    background: var(--tinta-3);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--niebla);
+  }
+
+  .proyecto__acciones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  .proyecto__acciones .btn {
+    padding: 0 12px;
+  }
+
+  .proyectos__mas {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+  }
+
+  .proyectos__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px 24px;
+    margin-top: 48px;
+    padding: 24px 28px;
+    border: 1px dashed var(--borde);
+    border-radius: var(--radio-l);
+  }
+
+  .proyectos__acciones p {
+    flex: 1 1 260px;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--blanco);
+  }
+
+  .proyectos__acciones div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .ficha {
+    width: min(680px, calc(100% - 32px));
+    max-height: calc(100dvh - 48px);
+    padding: 0;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-l);
+    background: var(--tinta-2);
+    color: var(--niebla);
+    box-shadow: 0 40px 100px -20px rgb(0 0 0 / 0.8);
+  }
+
+  .ficha[open] {
+    display: flex;
+    flex-direction: column;
+    animation: abrir-ficha 0.3s var(--ease);
+  }
+
+  .ficha::backdrop {
+    background: rgb(5 7 13 / 0.75);
+    backdrop-filter: blur(4px);
+  }
+
+  .ficha__cabecera {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px 24px 20px 28px;
+    border-bottom: 1px solid var(--borde);
+  }
+
+  .ficha__cat {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--lima);
+  }
+
+  .ficha h3 {
+    margin-top: 8px;
+    font-size: clamp(22px, 3vw, 26px);
+  }
+
+  .ficha__cerrar {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    background: transparent;
+    color: var(--gris);
+  }
+
+  .ficha__cerrar:hover {
+    border-color: var(--lima);
+    color: var(--lima);
+  }
+
+  .ficha__cuerpo {
+    display: grid;
+    gap: 22px;
+    padding: 24px 28px;
+    overflow-y: auto;
+  }
+
+  .ficha h4 {
+    margin-bottom: 8px;
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+
+  .ficha__cuerpo p {
+    font-size: 16px;
+  }
+
+  .ficha__cuerpo strong {
+    color: var(--blanco);
+  }
+
+  .ficha__lista {
+    display: grid;
+    gap: 8px;
+    font-size: 15.5px;
+  }
+
+  .ficha__lista li {
+    display: flex;
+    gap: 10px;
+  }
+
+  .ficha__lista :global(svg) {
+    flex: none;
+    margin-top: 4px;
+    color: var(--lima);
+  }
+
+  .ficha__tec {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .ficha__pie {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 28px;
+    border-top: 1px solid var(--borde);
+    background: var(--tinta);
+  }
+
+  .ficha__similar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--whatsapp);
+  }
+
+  .ficha__similar:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @keyframes entrar {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+
+  @keyframes abrir-ficha {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .ficha__similar {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+
+  @media (min-width: 680px) {
+    .proyectos {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .proyectos {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+  }
+</style>
+
+<script>
+  const seccion = document.getElementById('proyectos')!;
+  const lista = seccion.querySelector<HTMLUListElement>('.proyectos')!;
+  const filtros = seccion.querySelectorAll<HTMLButtonElement>('.filtros button');
+  const verMas = document.getElementById('ver-mas') as HTMLButtonElement | null;
+  const textoVerMas = verMas?.textContent;
+
+  filtros.forEach((b) =>
+    b.addEventListener('click', () => {
+      const filtro = b.dataset.filtro;
+      filtros.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      lista.classList.toggle('todos', filtro !== 'todos' || verMas?.getAttribute('aria-expanded') === 'true');
+      lista.querySelectorAll<HTMLLIElement>('.proyecto').forEach((li) => {
+        li.hidden = filtro !== 'todos' && li.dataset.categoria !== filtro;
+      });
+      if (verMas) verMas.parentElement!.hidden = filtro !== 'todos';
+    }),
+  );
+
+  verMas?.addEventListener('click', () => {
+    const abrir = verMas.getAttribute('aria-expanded') !== 'true';
+    verMas.setAttribute('aria-expanded', String(abrir));
+    verMas.textContent = abrir ? 'Ver menos' : textoVerMas!;
+    lista.classList.toggle('todos', abrir);
+    if (!abrir) seccion.scrollIntoView();
+  });
+
+  seccion.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    const abrir = t.closest<HTMLButtonElement>('[data-ficha]');
+    if (abrir) {
+      document.querySelector<HTMLDialogElement>(`#ficha-${abrir.dataset.ficha}`)?.showModal();
+      document.body.classList.add('ficha-abierta');
+      return;
+    }
+    const dialogo = t.closest('dialog') ?? (t.tagName === 'DIALOG' ? t : null);
+    if (t.closest('[data-cerrar]') || t.tagName === 'DIALOG') (dialogo as HTMLDialogElement)?.close();
+  });
+
+  seccion.querySelectorAll('dialog').forEach((d) =>
+    d.addEventListener('close', () => document.body.classList.remove('ficha-abierta')),
+  );
+</script>

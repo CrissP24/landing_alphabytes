@@ -1,0 +1,236 @@
+---
+import Icon from './Icon.astro';
+import WaButton from './WaButton.astro';
+import { SERVICIOS_SOFTWARE, SERVICIOS_TI } from '../data/site';
+
+const bloques = [
+  { id: 'software', titulo: 'Desarrollo de Software', texto: 'Webs, apps y sistemas que trabajan por tu negocio.', items: SERVICIOS_SOFTWARE },
+  { id: 'ti', titulo: 'Soporte e Infraestructura TI', texto: 'Equipos, redes y sistemas funcionando sin interrupciones.', items: SERVICIOS_TI },
+];
+---
+
+<section class="seccion" id="servicios" aria-labelledby="servicios-titulo">
+  <div class="contenedor">
+    <header class="cabecera revelar">
+      <p class="etiqueta">// 01 · Servicios</p>
+      <h2 id="servicios-titulo">Todo lo que tu empresa necesita en <span class="acento">tecnología</span></h2>
+      <p>Desde tu primera página web hasta la red de tu oficina. Un solo equipo, una sola conversación.</p>
+    </header>
+
+    {bloques.map((b) => (
+      <div class="bloque">
+        <div class="bloque__cabecera revelar">
+          <h3>{b.titulo}</h3>
+          <p>{b.texto}</p>
+        </div>
+        <ul class:list={['tarjetas', b.items.length === 4 && 'tarjetas--4']}>
+          {b.items.map((s, i) => (
+            <li class:list={['tarjeta revelar', s.destacado && 'tarjeta--destacada']} style={`--retraso: ${(i % 3) * 0.06}s`}>
+              {s.destacado && <span class="tarjeta__insignia">{s.destacado}</span>}
+              <span class="tarjeta__icono"><Icon name={s.icono} size={26} /></span>
+              <h4>{s.titulo}</h4>
+              <p class="tarjeta__resumen">{s.resumen}</p>
+              <ul class="tarjeta__puntos">
+                {s.puntos.map((p) => (
+                  <li><Icon name="check" size={16} />{p}</li>
+                ))}
+              </ul>
+              <WaButton clave={s.clave} variante={s.destacado ? 'wa' : 'borde'} tam="sm" bloque aria-label={`Cotizar ${s.titulo} por WhatsApp`}>
+                Cotizar
+              </WaButton>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+
+    <p class="servicios__pie revelar">
+      ¿No encuentras lo que buscas? Cuéntanos tu caso y lo resolvemos juntos.
+      <WaButton clave="general" variante="indigo" tam="sm">Hacer una consulta</WaButton>
+    </p>
+  </div>
+</section>
+
+<style>
+  .bloque + .bloque {
+    margin-top: clamp(56px, 8vw, 88px);
+  }
+
+  .bloque__cabecera {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 24px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--borde);
+  }
+
+  .bloque__cabecera h3 {
+    font-size: clamp(22px, 3vw, 28px);
+  }
+
+  .bloque__cabecera p {
+    color: var(--gris);
+    font-size: 15px;
+  }
+
+  .tarjetas {
+    display: grid;
+    gap: 20px;
+  }
+
+  .tarjeta {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 28px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-l);
+    background: var(--tinta-2);
+    transition:
+      translate 0.35s var(--ease),
+      border-color 0.35s,
+      box-shadow 0.35s,
+      opacity 0.7s var(--ease) var(--retraso, 0s),
+      transform 0.7s var(--ease) var(--retraso, 0s);
+  }
+
+  .tarjeta::after {
+    content: '';
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--lima);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .tarjeta:hover {
+    translate: 0 -6px;
+    border-color: #343e63;
+    box-shadow: var(--sombra);
+  }
+
+  .tarjeta:hover::after {
+    opacity: 1;
+  }
+
+  .tarjeta--destacada {
+    border-color: var(--indigo);
+    background:
+      linear-gradient(var(--tinta-2), var(--tinta-2)) padding-box,
+      var(--indigo);
+    box-shadow: 0 0 0 1px var(--indigo), 0 30px 60px -30px rgb(91 75 255 / 0.55);
+  }
+
+  .tarjeta--destacada:hover {
+    border-color: var(--indigo);
+  }
+
+  .tarjeta__insignia {
+    position: absolute;
+    top: -12px;
+    left: 24px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--indigo);
+    color: var(--blanco);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .tarjeta--destacada::after {
+    opacity: 1;
+  }
+
+  .tarjeta__icono {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: rgb(91 75 255 / 0.14);
+    color: var(--indigo-claro);
+    transition:
+      background-color 0.3s,
+      color 0.3s;
+  }
+
+  .tarjeta:hover .tarjeta__icono {
+    background: var(--lima);
+    color: var(--tinta);
+  }
+
+  .tarjeta h4 {
+    margin-top: 22px;
+    font-size: 21px;
+  }
+
+  .tarjeta__resumen {
+    margin-top: 10px;
+    color: var(--gris);
+    font-size: 15.5px;
+  }
+
+  .tarjeta__puntos {
+    display: grid;
+    gap: 10px;
+    margin: 22px 0 28px;
+    font-size: 15px;
+  }
+
+  .tarjeta__puntos li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .tarjeta__puntos :global(svg) {
+    flex: none;
+    margin-top: 4px;
+    color: var(--lima);
+  }
+
+  .tarjeta :global(.btn) {
+    margin-top: auto;
+  }
+
+  .servicios__pie {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 48px;
+    color: var(--gris);
+    text-align: center;
+  }
+
+  @media (min-width: 680px) {
+    .tarjetas {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .tarjetas {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .tarjetas--4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .tarjetas--4 .tarjeta {
+      padding: 24px;
+    }
+  }
+</style>

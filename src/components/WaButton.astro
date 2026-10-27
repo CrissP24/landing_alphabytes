@@ -1,0 +1,21 @@
+---
+import Icon from './Icon.astro';
+import { MENSAJES, waLink } from '../data/site';
+
+interface Props {
+  clave?: string;
+  variante?: 'wa' | 'indigo' | 'borde' | 'blanco';
+  tam?: 'sm' | 'md';
+  bloque?: boolean;
+  class?: string;
+  'aria-label'?: string;
+}
+
+const { clave = 'general', variante = 'wa', tam = 'md', bloque = false, class: extra, ...resto } = Astro.props;
+const clases = ['btn', `btn--${variante}`, tam === 'sm' && 'btn--sm', bloque && 'btn--bloque', extra];
+---
+
+<a href={waLink(MENSAJES[clave])} target="_blank" rel="noopener" data-wa={clave} class:list={clases} {...resto}>
+  <Icon name="whatsapp" size={tam === 'sm' ? 18 : 20} />
+  <slot />
+</a>

@@ -1,0 +1,190 @@
+---
+import Icon from './Icon.astro';
+import { SITE, REDES, SERVICIOS_SOFTWARE, SERVICIOS_TI } from '../data/site';
+import { asset } from '../lib/url';
+
+const secciones = [
+  ['servicios', 'Servicios'],
+  ['proceso', 'Proceso'],
+  ['tecnologias', 'Tecnologías'],
+  ['proyectos', 'Proyectos'],
+  ['nosotros', 'Nosotros'],
+  ['preguntas', 'Preguntas'],
+  ['contacto', 'Contacto'],
+];
+
+const nombresRed: Record<string, string> = {
+  github: 'GitHub',
+  facebook: 'Facebook',
+  instagram: 'Instagram',
+  linkedin: 'LinkedIn',
+  tiktok: 'TikTok',
+};
+
+const redes = Object.entries(REDES).filter(([, url]) => url);
+const anio = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="contenedor">
+    <div class="footer__fila">
+      <div class="footer__marca">
+        <img src={asset('logos/alphabytes-vertical-eslogan-negativo.svg')} alt="AlphaBytes · Desarrollo de software" width="180" height="121" loading="lazy" />
+        <p>
+          Desarrollo web, aplicaciones móviles, software a medida y soporte técnico desde {SITE.ciudad}, {SITE.provincia}, para todo {SITE.pais}.
+        </p>
+        <ul class="redes">
+          {redes.map(([red, url]) => (
+            <li>
+              <a href={url} target="_blank" rel="noopener" aria-label={nombresRed[red]}>
+                <Icon name={red} size={20} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <nav aria-label="Enlaces rápidos">
+        <h2>Navegación</h2>
+        <ul>
+          {secciones.map(([id, texto]) => <li><a href={`#${id}`}>{texto}</a></li>)}
+        </ul>
+      </nav>
+
+      <div>
+        <h2>Servicios</h2>
+        <ul>
+          {[...SERVICIOS_SOFTWARE, ...SERVICIOS_TI].map((s) => (
+            <li><a href={`https://wa.me/${SITE.whatsapp}`} data-wa={s.clave} target="_blank" rel="noopener">{s.titulo}</a></li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h2>Contacto</h2>
+        <ul>
+          <li><a href={`https://wa.me/${SITE.whatsapp}`} data-wa="general" target="_blank" rel="noopener">{SITE.whatsappVisible}</a></li>
+          <li><a href={`mailto:${SITE.correo}?subject=${encodeURIComponent(SITE.asuntoCorreo)}`}>{SITE.correo}</a></li>
+          <li>{SITE.ciudad}, {SITE.provincia}, {SITE.pais}</li>
+          <li>{SITE.horario}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__legal">
+      <p>© {anio} AlphaBytes. Todos los derechos reservados.</p>
+      <p class="footer__mono">Hecho con código limpio en {SITE.ciudad}</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.footer__legal p:first-child').forEach((p) => {
+    p.textContent = p.textContent!.replace(/\d{4}/, String(new Date().getFullYear()));
+  });
+</script>
+
+<style>
+  .footer {
+    padding: clamp(56px, 8vw, 88px) 0 32px;
+    border-top: 1px solid var(--borde);
+    font-size: 15px;
+  }
+
+  .footer__fila {
+    display: grid;
+    gap: 40px;
+  }
+
+  .footer__marca img {
+    width: 160px;
+    height: auto;
+  }
+
+  .footer__marca p {
+    max-width: 340px;
+    margin-top: 24px;
+    color: var(--gris);
+  }
+
+  .redes {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .redes a {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    color: var(--gris);
+    transition:
+      color 0.2s,
+      border-color 0.2s;
+  }
+
+  .redes a:hover {
+    color: var(--lima);
+    border-color: var(--lima);
+  }
+
+  .footer h2 {
+    margin-bottom: 18px;
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--lima);
+  }
+
+  .footer ul:not(.redes) {
+    display: grid;
+    gap: 10px;
+    color: var(--gris);
+  }
+
+  .footer ul a {
+    transition: color 0.2s;
+    overflow-wrap: anywhere;
+  }
+
+  .footer ul a:hover {
+    color: var(--blanco);
+  }
+
+  .footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--borde);
+    color: var(--gris);
+    font-size: 14px;
+  }
+
+  .footer__mono {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  @media (min-width: 680px) {
+    .footer__fila {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .footer__fila {
+      grid-template-columns: 1.4fr 0.8fr 1fr 1fr;
+      gap: 48px;
+    }
+  }
+</style>

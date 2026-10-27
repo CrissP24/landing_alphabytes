@@ -1,0 +1,139 @@
+---
+import WaButton from './WaButton.astro';
+import { PROCESO } from '../data/site';
+---
+
+<section class="seccion seccion--alt" id="proceso" aria-labelledby="proceso-titulo">
+  <div class="contenedor">
+    <header class="cabecera revelar">
+      <p class="etiqueta">// 02 · Cómo trabajamos</p>
+      <h2 id="proceso-titulo">Un proceso claro, <span class="acento">sin sorpresas</span></h2>
+      <p>Sabes en todo momento en qué etapa está tu proyecto y qué viene después.</p>
+    </header>
+
+    <ol class="linea">
+      {PROCESO.map((paso, i) => (
+        <li class="paso revelar" style={`--retraso: ${i * 0.08}s`}>
+          <span class="paso__num">{String(i + 1).padStart(2, '0')}</span>
+          <div>
+            <h3>{paso.titulo}</h3>
+            <p>{paso.texto}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+
+    <div class="proceso__cta revelar">
+      <p>El primer paso no cuesta nada.</p>
+      <WaButton clave="general">Empecemos a conversar</WaButton>
+    </div>
+  </div>
+</section>
+
+<style>
+  .linea {
+    position: relative;
+    display: grid;
+    gap: 28px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .linea::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    left: 27px;
+    width: 1px;
+    background: linear-gradient(var(--indigo), var(--borde));
+  }
+
+  .paso {
+    position: relative;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  .paso__num {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    background: var(--tinta);
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--lima);
+    transition:
+      background-color 0.3s,
+      color 0.3s,
+      border-color 0.3s;
+  }
+
+  .paso:hover .paso__num {
+    background: var(--lima);
+    border-color: var(--lima);
+    color: var(--tinta);
+  }
+
+  .paso h3 {
+    margin-top: 4px;
+    font-size: 20px;
+  }
+
+  .paso p {
+    margin-top: 6px;
+    color: var(--gris);
+    font-size: 15.5px;
+  }
+
+  .proceso__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 24px;
+    margin-top: 56px;
+    padding: 24px 28px;
+    border: 1px dashed var(--borde);
+    border-radius: var(--radio-l);
+  }
+
+  .proceso__cta p {
+    flex: 1 1 220px;
+    font-size: 19px;
+    font-weight: 500;
+    color: var(--blanco);
+  }
+
+  @media (min-width: 1024px) {
+    .linea {
+      grid-template-columns: repeat(5, 1fr);
+      gap: 24px;
+    }
+
+    .linea::before {
+      top: 28px;
+      bottom: auto;
+      left: 28px;
+      right: 28px;
+      width: auto;
+      height: 1px;
+      background: linear-gradient(to right, var(--indigo), var(--borde));
+    }
+
+    .paso {
+      grid-template-columns: 1fr;
+    }
+
+    .paso h3 {
+      margin-top: 0;
+    }
+  }
+</style>

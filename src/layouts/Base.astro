@@ -1,0 +1,91 @@
+---
+import '../styles/global.css';
+import { SITE, REDES, SERVICIOS_SOFTWARE, SERVICIOS_TI } from '../data/site';
+import { asset } from '../lib/url';
+import BrandSprite from '../components/BrandSprite.astro';
+
+const canonical = new URL(import.meta.env.BASE_URL, Astro.site).href;
+const ogImage = new URL(asset('og-image-1200x630.png'), Astro.site).href;
+const logo = new URL(asset('android-chrome-512x512.png'), Astro.site).href;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: SITE.nombre,
+  description: SITE.descripcion,
+  url: canonical,
+  logo,
+  image: ogImage,
+  telephone: SITE.whatsappVisible.replace(/\s/g, ''),
+  email: SITE.correo,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: SITE.ciudad,
+    addressRegion: SITE.provincia,
+    addressCountry: 'EC',
+  },
+  areaServed: { '@type': 'Country', name: SITE.pais },
+  openingHours: SITE.horarioSchema,
+  sameAs: Object.values(REDES).filter(Boolean),
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Servicios de tecnología',
+    itemListElement: [...SERVICIOS_SOFTWARE, ...SERVICIOS_TI].map((s) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: s.titulo, description: s.resumen },
+    })),
+  },
+};
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{SITE.titulo}</title>
+    <meta name="description" content={SITE.descripcion} />
+    <meta
+      name="keywords"
+      content="desarrollo web, aplicaciones móviles, software a medida, mantenimiento de computadoras, auditoría informática, redes, Jipijapa, Manabí, Ecuador"
+    />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#5B4BFF" />
+    <meta name="color-scheme" content="dark" />
+
+    <link rel="icon" href={asset('favicon.ico')} sizes="48x48" />
+    <link rel="icon" href={asset('favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={asset('apple-touch-icon.png')} />
+    <link rel="manifest" href={asset('site.webmanifest')} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_EC" />
+    <meta property="og:site_name" content={SITE.nombre} />
+    <meta property="og:title" content={SITE.titulo} />
+    <meta property="og:description" content={SITE.descripcion} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="AlphaBytes · Desarrollo de software" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={SITE.titulo} />
+    <meta name="twitter:description" content={SITE.descripcion} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Space+Grotesk:wght@400;500;700&display=swap"
+    />
+
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </head>
+  <body>
+    <BrandSprite />
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+    <slot />
+  </body>
+</html>

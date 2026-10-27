@@ -1,0 +1,284 @@
+---
+import Icon from './Icon.astro';
+import { SITE, SERVICIOS_SOFTWARE, SERVICIOS_TI, PRESUPUESTOS } from '../data/site';
+
+const mailto = `mailto:${SITE.correo}?subject=${encodeURIComponent(SITE.asuntoCorreo)}`;
+
+const datos = [
+  { icono: 'whatsapp', titulo: 'WhatsApp', texto: SITE.whatsappVisible, href: `https://wa.me/${SITE.whatsapp}`, wa: 'general' },
+  { icono: 'mail', titulo: 'Correo', texto: SITE.correo, href: mailto },
+  { icono: 'pin', titulo: 'Ubicación', texto: `${SITE.ciudad}, ${SITE.provincia}, ${SITE.pais}. Atención presencial en ${SITE.ciudad} y remota para cualquier ciudad o país.` },
+  { icono: 'clock', titulo: 'Horario de atención', texto: SITE.horario },
+  { icono: 'github', titulo: 'GitHub', texto: SITE.github.replace('https://', ''), href: SITE.github },
+];
+---
+
+<section class="seccion seccion--alt" id="contacto" aria-labelledby="contacto-titulo">
+  <div class="contenedor contacto">
+    <div class="contacto__info revelar">
+      <p class="etiqueta">// 06 · Contacto</p>
+      <h2 id="contacto-titulo">Cuéntanos tu idea y te <span class="acento">cotizamos gratis</span></h2>
+      <p class="contacto__intro">
+        Completa el formulario y se abrirá WhatsApp con tu mensaje listo para enviar. Sin registros ni esperas.
+      </p>
+
+      <ul class="datos">
+        {datos.map((d) => (
+          <li>
+            <span class="datos__icono"><Icon name={d.icono} size={20} /></span>
+            <div>
+              <p class="datos__titulo">{d.titulo}</p>
+              {d.href ? (
+                <a href={d.href} target={d.href.startsWith('http') ? '_blank' : undefined} rel="noopener" data-wa={d.wa}>{d.texto}</a>
+              ) : (
+                <p>{d.texto}</p>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <form class="form revelar" id="form-contacto" novalidate>
+      <div class="campo">
+        <label for="f-nombre">Nombre</label>
+        <input id="f-nombre" name="nombre" type="text" autocomplete="name" required minlength="2" placeholder="¿Cómo te llamas?" aria-describedby="e-nombre" />
+        <p class="campo__error" id="e-nombre" aria-live="polite"></p>
+      </div>
+
+      <div class="campo">
+        <label for="f-servicio">Servicio</label>
+        <select id="f-servicio" name="servicio" required aria-describedby="e-servicio">
+          <option value="" disabled selected>Elige un servicio</option>
+          <optgroup label="Desarrollo de Software">
+            {SERVICIOS_SOFTWARE.map((s) => <option>{s.titulo}</option>)}
+          </optgroup>
+          <optgroup label="Soporte e Infraestructura TI">
+            {SERVICIOS_TI.map((s) => <option>{s.titulo}</option>)}
+          </optgroup>
+          <option>Otro</option>
+        </select>
+        <p class="campo__error" id="e-servicio" aria-live="polite"></p>
+      </div>
+
+      <div class="campo">
+        <label for="f-presupuesto">Presupuesto aproximado <span>(opcional)</span></label>
+        <select id="f-presupuesto" name="presupuesto">
+          {PRESUPUESTOS.map((p) => <option>{p}</option>)}
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="f-mensaje">Mensaje</label>
+        <textarea id="f-mensaje" name="mensaje" rows="5" required minlength="10" placeholder="Cuéntanos qué necesitas, para cuándo y cualquier detalle importante." aria-describedby="e-mensaje"></textarea>
+        <p class="campo__error" id="e-mensaje" aria-live="polite"></p>
+      </div>
+
+      <button type="submit" class="btn btn--wa btn--bloque">
+        <Icon name="whatsapp" size={20} /> Enviar por WhatsApp
+      </button>
+      <p class="form__nota">Se abrirá WhatsApp con tu mensaje. Tú decides cuándo enviarlo.</p>
+    </form>
+  </div>
+</section>
+
+<style>
+  .contacto {
+    display: grid;
+    gap: 48px;
+  }
+
+  .contacto__info h2 {
+    margin-top: 16px;
+    font-size: clamp(32px, 5vw, 46px);
+  }
+
+  .contacto__intro {
+    margin-top: 16px;
+    color: var(--gris);
+    font-size: 17.5px;
+  }
+
+  .datos {
+    display: grid;
+    gap: 20px;
+    margin-top: 36px;
+  }
+
+  .datos li {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .datos__icono {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    color: var(--lima);
+  }
+
+  .datos__titulo {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+
+  .datos a,
+  .datos p:not(.datos__titulo) {
+    margin-top: 2px;
+    color: var(--niebla);
+    overflow-wrap: anywhere;
+  }
+
+  .datos a {
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .datos a:hover {
+    color: var(--lima);
+  }
+
+  .form {
+    display: grid;
+    gap: 20px;
+    padding: clamp(24px, 4vw, 40px);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-l);
+    background: var(--tinta);
+  }
+
+  .campo {
+    display: grid;
+    gap: 8px;
+  }
+
+  label {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--blanco);
+  }
+
+  label span {
+    color: var(--gris);
+    font-weight: 400;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-s);
+    background: var(--tinta-2);
+    font-size: 16px;
+    color: var(--niebla);
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+
+  select {
+    appearance: none;
+    padding-right: 44px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23C6F432' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 130px;
+  }
+
+  ::placeholder {
+    color: #7c859f;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--indigo);
+    box-shadow: 0 0 0 3px rgb(91 75 255 / 0.3);
+  }
+
+  [aria-invalid='true'] {
+    border-color: #ff6b6b;
+  }
+
+  .campo__error {
+    min-height: 0;
+    font-size: 14px;
+    color: #ff8a8a;
+  }
+
+  .campo__error:empty {
+    display: none;
+  }
+
+  .form__nota {
+    margin-top: -6px;
+    font-size: 13.5px;
+    text-align: center;
+    color: var(--gris);
+  }
+
+  @media (min-width: 1024px) {
+    .contacto {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 72px;
+      align-items: start;
+    }
+  }
+</style>
+
+<script>
+  import { abrirWhatsApp } from '../scripts/whatsapp';
+
+  const form = document.getElementById('form-contacto') as HTMLFormElement;
+
+  const mensajes: Record<string, string> = {
+    nombre: 'Escribe tu nombre (mínimo 2 letras).',
+    servicio: 'Elige el servicio que te interesa.',
+    mensaje: 'Cuéntanos un poco más (mínimo 10 caracteres).',
+  };
+
+  function validar(campo: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
+    const error = document.getElementById(`e-${campo.name}`);
+    if (!error) return true;
+    campo.value = campo.value.trimStart();
+    const ok = campo.checkValidity() && campo.value.trim().length > 0;
+    campo.setAttribute('aria-invalid', String(!ok));
+    error.textContent = ok ? '' : mensajes[campo.name];
+    return ok;
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const campos = [form.nombre, form.servicio, form.mensaje];
+    const invalidos = campos.filter((c) => !validar(c));
+    if (invalidos.length) {
+      invalidos[0].focus();
+      return;
+    }
+
+    const d = Object.fromEntries(new FormData(form)) as Record<string, string>;
+    abrirWhatsApp(
+      `Hola AlphaBytes, soy ${d.nombre.trim()}. Me interesa: ${d.servicio}. Presupuesto: ${d.presupuesto || 'Por definir'}. Detalles: ${d.mensaje.trim()}`,
+    );
+  });
+
+  form.addEventListener('input', (e) => {
+    const campo = e.target as HTMLInputElement;
+    if (campo.getAttribute('aria-invalid') === 'true') validar(campo);
+  });
+</script>
