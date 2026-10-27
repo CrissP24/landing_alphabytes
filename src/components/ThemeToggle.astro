@@ -1,0 +1,58 @@
+---
+import Icon from './Icon.astro';
+
+const opciones = [
+  { valor: 'auto', icono: 'monitor', texto: 'Automático' },
+  { valor: 'light', icono: 'sun', texto: 'Claro' },
+  { valor: 'dark', icono: 'moon', texto: 'Oscuro' },
+];
+---
+
+<div class="tema" role="group" aria-label="Tema de color">
+  {opciones.map((o) => (
+    <button type="button" data-tema={o.valor} aria-pressed={o.valor === 'auto' ? 'true' : 'false'} title={o.texto}>
+      <Icon name={o.icono} size={15} />
+      <span class="sr-only">{o.texto}</span>
+    </button>
+  ))}
+</div>
+
+<style>
+  .tema {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--borde);
+    border-radius: 11px;
+    background: var(--bg-2);
+  }
+
+  button {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--texto-3);
+    transition:
+      background-color 0.25s,
+      color 0.25s;
+  }
+
+  button:hover {
+    color: var(--titulo);
+  }
+
+  button[aria-pressed='true'] {
+    background: var(--bg-3);
+    color: var(--titulo);
+    box-shadow: inset 0 0 0 1px var(--borde);
+  }
+</style>
+
+<script>
+  import { iniciarTema } from '../scripts/tema';
+  iniciarTema();
+</script>

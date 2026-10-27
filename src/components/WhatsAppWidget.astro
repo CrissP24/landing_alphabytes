@@ -100,7 +100,7 @@ import { ACCESOS_RAPIDOS, MENSAJES, SITE, waLink } from '../data/site';
     overflow: hidden;
     border: 1px solid var(--borde);
     border-radius: var(--radio-l);
-    background: var(--tinta-2);
+    background: var(--bg-2);
     box-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.75);
     transform-origin: bottom right;
     animation: abrir 0.3s var(--ease);
@@ -115,12 +115,12 @@ import { ACCESOS_RAPIDOS, MENSAJES, SITE, waLink } from '../data/site';
     align-items: center;
     gap: 12px;
     padding: 16px 16px 16px 18px;
-    background: var(--tinta-3);
+    background: var(--bg-3);
   }
 
   .wa__titulo {
     font-weight: 700;
-    color: var(--blanco);
+    color: var(--titulo);
   }
 
   .wa__estado {
@@ -128,7 +128,7 @@ import { ACCESOS_RAPIDOS, MENSAJES, SITE, waLink } from '../data/site';
     align-items: center;
     gap: 6px;
     font-size: 13px;
-    color: var(--gris);
+    color: var(--texto-2);
   }
 
   .wa__estado::before {
@@ -148,12 +148,12 @@ import { ACCESOS_RAPIDOS, MENSAJES, SITE, waLink } from '../data/site';
     border: 0;
     border-radius: 10px;
     background: transparent;
-    color: var(--gris);
+    color: var(--texto-2);
   }
 
   .wa__cerrar:hover {
-    background: var(--tinta-2);
-    color: var(--blanco);
+    background: var(--bg-2);
+    color: var(--titulo);
   }
 
   .wa__cuerpo {
@@ -163,7 +163,7 @@ import { ACCESOS_RAPIDOS, MENSAJES, SITE, waLink } from '../data/site';
   .wa__burbuja {
     padding: 12px 14px;
     border-radius: 4px 14px 14px 14px;
-    background: var(--tinta-3);
+    background: var(--bg-3);
     font-size: 14.5px;
   }
 
@@ -189,7 +189,7 @@ import { ACCESOS_RAPIDOS, MENSAJES, SITE, waLink } from '../data/site';
   }
 
   .wa__cuerpo a :global(svg) {
-    color: var(--gris);
+    color: var(--texto-2);
     transition:
       color 0.2s,
       translate 0.2s;

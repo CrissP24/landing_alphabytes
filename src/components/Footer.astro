@@ -29,7 +29,8 @@ const anio = new Date().getFullYear();
   <div class="contenedor">
     <div class="footer__fila">
       <div class="footer__marca">
-        <img src={asset('logos/alphabytes-vertical-eslogan-negativo.svg')} alt="AlphaBytes · Desarrollo de software" width="180" height="121" loading="lazy" />
+        <img class="logo-oscuro" src={asset('logos/alphabytes-vertical-eslogan-negativo.svg')} alt="AlphaBytes · Desarrollo de software" width="180" height="121" loading="lazy" />
+        <img class="logo-claro" src={asset('logos/alphabytes-vertical-eslogan-color.svg')} alt="" aria-hidden="true" width="180" height="121" loading="lazy" />
         <p>
           Desarrollo web, aplicaciones móviles, software a medida y soporte técnico desde {SITE.ciudad}, {SITE.provincia}, para todo {SITE.pais}.
         </p>
@@ -101,10 +102,19 @@ const anio = new Date().getFullYear();
     height: auto;
   }
 
+  .logo-claro,
+  :global([data-theme='light']) .logo-oscuro {
+    display: none;
+  }
+
+  :global([data-theme='light']) .logo-claro {
+    display: block;
+  }
+
   .footer__marca p {
     max-width: 340px;
     margin-top: 24px;
-    color: var(--gris);
+    color: var(--texto-2);
   }
 
   .redes {
@@ -120,15 +130,15 @@ const anio = new Date().getFullYear();
     height: 44px;
     border: 1px solid var(--borde);
     border-radius: 12px;
-    color: var(--gris);
+    color: var(--texto-2);
     transition:
       color 0.2s,
       border-color 0.2s;
   }
 
   .redes a:hover {
-    color: var(--lima);
-    border-color: var(--lima);
+    color: var(--acento);
+    border-color: var(--acento);
   }
 
   .footer h2 {
@@ -138,13 +148,13 @@ const anio = new Date().getFullYear();
     font-size: 12px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--lima);
+    color: var(--acento);
   }
 
   .footer ul:not(.redes) {
     display: grid;
     gap: 10px;
-    color: var(--gris);
+    color: var(--texto-2);
   }
 
   .footer ul a {
@@ -153,7 +163,7 @@ const anio = new Date().getFullYear();
   }
 
   .footer ul a:hover {
-    color: var(--blanco);
+    color: var(--titulo);
   }
 
   .footer__legal {
@@ -164,7 +174,7 @@ const anio = new Date().getFullYear();
     margin-top: 56px;
     padding-top: 24px;
     border-top: 1px solid var(--borde);
-    color: var(--gris);
+    color: var(--texto-2);
     font-size: 14px;
   }
 

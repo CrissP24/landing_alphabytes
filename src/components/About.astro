@@ -26,7 +26,7 @@ import { SITE, VENTAJAS } from '../data/site';
 
     <ul class="ventajas">
       {VENTAJAS.map((v, i) => (
-        <li class="ventaja revelar" style={`--retraso: ${i * 0.08}s`}>
+        <li class="ventaja revelar" data-foco style={`--retraso: ${i * 0.08}s`}>
           <span class="ventaja__icono"><Icon name={v.icono} size={24} /></span>
           <h3>{v.titulo}</h3>
           <p>{v.texto}</p>
@@ -49,7 +49,7 @@ import { SITE, VENTAJAS } from '../data/site';
 
   .nosotros__intro p:not(.etiqueta) {
     margin-top: 18px;
-    color: var(--gris);
+    color: var(--texto-2);
     font-size: 17.5px;
   }
 
@@ -59,7 +59,7 @@ import { SITE, VENTAJAS } from '../data/site';
 
   .nosotros__dato strong {
     font-size: 32px;
-    color: var(--lima);
+    color: var(--acento);
   }
 
   .ventajas {
@@ -72,7 +72,7 @@ import { SITE, VENTAJAS } from '../data/site';
     padding: 26px;
     border: 1px solid var(--borde);
     border-radius: var(--radio-l);
-    background: var(--tinta-2);
+    background: var(--bg-2);
     transition:
       translate 0.35s var(--ease),
       border-color 0.35s;
@@ -80,7 +80,7 @@ import { SITE, VENTAJAS } from '../data/site';
 
   .ventaja:hover {
     translate: 0 -4px;
-    border-color: #343e63;
+    border-color: var(--borde-fuerte);
   }
 
   .ventaja__icono {
@@ -105,7 +105,7 @@ import { SITE, VENTAJAS } from '../data/site';
 
   .ventaja p {
     margin-top: 8px;
-    color: var(--gris);
+    color: var(--texto-2);
     font-size: 15.5px;
   }
 

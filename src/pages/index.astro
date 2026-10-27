@@ -35,21 +35,5 @@ import WhatsAppWidget from '../components/WhatsAppWidget.astro';
 
 <script>
   import '../scripts/whatsapp';
-
-  const elementos = document.querySelectorAll('.revelar');
-  if ('IntersectionObserver' in window) {
-    const observador = new IntersectionObserver(
-      (entradas) => {
-        for (const e of entradas) {
-          if (!e.isIntersecting) continue;
-          e.target.classList.add('visible');
-          observador.unobserve(e.target);
-        }
-      },
-      { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
-    );
-    elementos.forEach((el) => observador.observe(el));
-  } else {
-    elementos.forEach((el) => el.classList.add('visible'));
-  }
+  import '../scripts/animaciones';
 </script>

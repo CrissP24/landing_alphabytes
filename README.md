@@ -130,6 +130,14 @@ La URL del sitio (para Open Graph, canonical y JSON-LD) se toma sola del dominio
 **GitHub Pages**: el workflow `.github/workflows/deploy.yml` publica al hacer push a `main`. Activa **Settings → Pages → Source: GitHub Actions** y crea la variable `BASE_PATH` (`/landing_alphabytes`) si no usas dominio propio.
 **Netlify**: importa el repo; comando `npm run build`, carpeta `dist`.
 
+## Tema claro y oscuro
+
+El sitio sigue el tema del dispositivo (automático) y el visitante puede fijar **Claro** u **Oscuro** con el selector del encabezado; la elección se recuerda en su navegador.
+
+- Los colores de cada tema están en `src/styles/global.css` (bloques `:root` y `[data-theme='light']`).
+- Usa siempre los tokens semánticos (`--bg`, `--bg-2`, `--texto`, `--titulo`, `--acento`, `--borde`…) en vez de colores fijos, así todo se adapta solo.
+- La clase `.siempre-oscuro` mantiene un bloque en oscuro en ambos temas (la ventana de código del hero y el llamado final).
+
 ## Marca
 
 | Token | Color | Uso |
@@ -142,4 +150,4 @@ La URL del sitio (para Open Graph, canonical y JSON-LD) se toma sola del dominio
 | `--gris` | `#A9B1C7` | Texto secundario |
 | `--whatsapp` | `#25D366` | Solo botones de WhatsApp |
 
-Tipografías: **Space Grotesk** (títulos y texto) y **JetBrains Mono** (etiquetas y detalles de código).
+Tipografías del sitio: **Geist** (títulos y texto) y **Geist Mono** (etiquetas y detalles de código). El logotipo del kit usa Space Grotesk, ya convertido a trazos en los SVG.

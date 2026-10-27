@@ -1,6 +1,7 @@
 ---
 import Icon from './Icon.astro';
 import WaButton from './WaButton.astro';
+import ThemeToggle from './ThemeToggle.astro';
 import { asset } from '../lib/url';
 
 const enlaces = [
@@ -16,7 +17,8 @@ const enlaces = [
 <header class="header" id="header">
   <div class="contenedor header__fila">
     <a href="#inicio" class="header__logo" aria-label="AlphaBytes, ir al inicio">
-      <img src={asset('logos/alphabytes-horizontal-negativo.svg')} alt="AlphaBytes" width="176" height="40" />
+      <img class="logo-oscuro" src={asset('logos/alphabytes-horizontal-negativo.svg')} alt="AlphaBytes" width="176" height="40" />
+      <img class="logo-claro" src={asset('logos/alphabytes-horizontal-color.svg')} alt="" width="176" height="40" aria-hidden="true" />
     </a>
 
     <nav class="nav" aria-label="Principal">
@@ -28,6 +30,7 @@ const enlaces = [
     </nav>
 
     <div class="header__acciones">
+      <div class="header__tema"><ThemeToggle /></div>
       <WaButton clave="cotizacion" tam="sm" class="header__cta">Cotizar</WaButton>
       <button
         class="header__menu"
@@ -46,7 +49,7 @@ const enlaces = [
     <nav aria-label="Menú móvil">
       <ul>
         {enlaces.map((e, i) => (
-          <li>
+          <li style={`--i: ${i}`}>
             <a href={`#${e.id}`} class="movil__enlace">
               <span class="movil__num">{String(i + 1).padStart(2, '0')}</span>
               {e.texto}
@@ -55,7 +58,13 @@ const enlaces = [
         ))}
       </ul>
     </nav>
-    <WaButton clave="cotizacion" bloque>Cotizar por WhatsApp</WaButton>
+    <div class="movil__pie">
+      <div class="movil__tema">
+        <span>Tema</span>
+        <ThemeToggle />
+      </div>
+      <WaButton clave="cotizacion" bloque>Cotizar por WhatsApp</WaButton>
+    </div>
   </div>
 </header>
 
@@ -74,7 +83,7 @@ const enlaces = [
 
   .header.con-fondo,
   .header.abierto {
-    background: rgb(11 15 26 / 0.82);
+    background: color-mix(in srgb, var(--bg) 78%, transparent);
     backdrop-filter: blur(14px) saturate(140%);
     -webkit-backdrop-filter: blur(14px) saturate(140%);
     border-color: var(--borde);
@@ -89,8 +98,17 @@ const enlaces = [
   }
 
   .header__logo img {
-    height: 34px;
+    height: 32px;
     width: auto;
+  }
+
+  .logo-claro,
+  :global([data-theme='light']) .logo-oscuro {
+    display: none;
+  }
+
+  :global([data-theme='light']) .logo-claro {
+    display: block;
   }
 
   .nav {
@@ -99,39 +117,48 @@ const enlaces = [
 
   .nav__lista {
     display: flex;
-    gap: 4px;
+    gap: 2px;
+    padding: 4px;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--bg-2) 70%, transparent);
   }
 
   .nav__enlace {
     position: relative;
-    display: block;
-    padding: 8px 14px;
-    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 13px;
+    border-radius: 8px;
+    font-size: 14.5px;
     font-weight: 500;
-    color: var(--gris);
-    transition: color 0.2s;
+    color: var(--texto-2);
+    transition:
+      color 0.2s,
+      background-color 0.25s;
   }
 
-  .nav__enlace::after {
+  .nav__enlace::before {
     content: '';
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     border-radius: 1px;
     background: var(--lima);
-    transform: translateX(-50%) scale(0);
-    transition: transform 0.25s var(--ease);
+    display: none;
   }
 
-  .nav__enlace:hover,
+  .nav__enlace:hover {
+    color: var(--titulo);
+  }
+
   .nav__enlace.activo {
-    color: var(--blanco);
+    background: var(--bg-3);
+    color: var(--titulo);
   }
 
-  .nav__enlace.activo::after {
-    transform: translateX(-50%) scale(1);
+  .nav__enlace.activo::before {
+    display: block;
   }
 
   .header__acciones {
@@ -140,7 +167,8 @@ const enlaces = [
     gap: 8px;
   }
 
-  .header__cta {
+  .header__cta,
+  .header__tema {
     display: none;
   }
 
@@ -151,7 +179,7 @@ const enlaces = [
     height: 44px;
     border: 1px solid var(--borde);
     border-radius: var(--radio-s);
-    background: var(--tinta-2);
+    background: var(--bg-2);
   }
 
   .header__menu :global(.icono-cerrar),
@@ -171,12 +199,40 @@ const enlaces = [
     justify-content: space-between;
     gap: 32px;
     padding: 24px var(--gutter) 32px;
-    background: var(--tinta);
+    background: var(--bg);
     overflow-y: auto;
   }
 
   .movil[hidden] {
     display: none;
+  }
+
+  .js .movil:not([hidden]) li {
+    animation: entrar-menu 0.5s var(--ease) both;
+    animation-delay: calc(var(--i) * 45ms);
+  }
+
+  .movil__pie {
+    display: grid;
+    gap: 16px;
+  }
+
+  .movil__tema {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--texto-2);
+  }
+
+  @keyframes entrar-menu {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
   }
 
   .movil__enlace {
@@ -185,16 +241,17 @@ const enlaces = [
     gap: 16px;
     padding: 14px 0;
     border-bottom: 1px solid var(--borde);
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--blanco);
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--titulo);
   }
 
   .movil__num {
     font-family: var(--mono);
     font-size: 13px;
     font-weight: 500;
-    color: var(--lima);
+    color: var(--acento);
   }
 
   @media (min-width: 560px) {
@@ -203,8 +260,9 @@ const enlaces = [
     }
   }
 
-  @media (min-width: 1024px) {
-    .nav {
+  @media (min-width: 1100px) {
+    .nav,
+    .header__tema {
       display: block;
     }
 
@@ -243,7 +301,7 @@ const enlaces = [
       boton.focus();
     }
   });
-  matchMedia('(min-width: 1024px)').addEventListener('change', (e) => e.matches && menu(false));
+  matchMedia('(min-width: 1100px)').addEventListener('change', (e) => e.matches && menu(false));
 
   const enlaces = new Map(
     [...document.querySelectorAll<HTMLAnchorElement>('.nav__enlace')].map((a) => [a.dataset.seccion, a]),

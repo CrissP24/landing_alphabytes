@@ -11,7 +11,7 @@ import { PROCESO } from '../data/site';
       <p>Sabes en todo momento en qué etapa está tu proyecto y qué viene después.</p>
     </header>
 
-    <ol class="linea">
+    <ol class="linea" data-animar>
       {PROCESO.map((paso, i) => (
         <li class="paso revelar" style={`--retraso: ${i * 0.08}s`}>
           <span class="paso__num">{String(i + 1).padStart(2, '0')}</span>
@@ -50,6 +50,16 @@ import { PROCESO } from '../data/site';
     background: linear-gradient(var(--indigo), var(--borde));
   }
 
+  .js .linea::before {
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 1.6s var(--ease-suave) 0.2s;
+  }
+
+  .js .linea.visible::before {
+    transform: none;
+  }
+
   .paso {
     position: relative;
     display: grid;
@@ -66,11 +76,11 @@ import { PROCESO } from '../data/site';
     height: 56px;
     border: 1px solid var(--borde);
     border-radius: 16px;
-    background: var(--tinta);
+    background: var(--superficie);
     font-family: var(--mono);
     font-weight: 500;
     font-size: 16px;
-    color: var(--lima);
+    color: var(--acento);
     transition:
       background-color 0.3s,
       color 0.3s,
@@ -90,7 +100,7 @@ import { PROCESO } from '../data/site';
 
   .paso p {
     margin-top: 6px;
-    color: var(--gris);
+    color: var(--texto-2);
     font-size: 15.5px;
   }
 
@@ -109,7 +119,7 @@ import { PROCESO } from '../data/site';
     flex: 1 1 220px;
     font-size: 19px;
     font-weight: 500;
-    color: var(--blanco);
+    color: var(--titulo);
   }
 
   @media (min-width: 1024px) {
@@ -125,7 +135,12 @@ import { PROCESO } from '../data/site';
       right: 28px;
       width: auto;
       height: 1px;
-      background: linear-gradient(to right, var(--indigo), var(--borde));
+      background: linear-gradient(to right, var(--indigo), var(--lima) 60%, var(--borde));
+    }
+
+    .js .linea::before {
+      transform: scaleX(0);
+      transform-origin: left;
     }
 
     .paso {

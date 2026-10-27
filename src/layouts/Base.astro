@@ -39,7 +39,7 @@ const schema = {
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="es" data-theme="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -50,8 +50,9 @@ const schema = {
       content="desarrollo web, aplicaciones móviles, software a medida, mantenimiento de computadoras, auditoría informática, redes, Jipijapa, Manabí, Ecuador"
     />
     <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#5B4BFF" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0B0F1A" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F6F7FB" media="(prefers-color-scheme: light)" />
+    <meta name="color-scheme" content="dark light" />
 
     <link rel="icon" href={asset('favicon.ico')} sizes="48x48" />
     <link rel="icon" href={asset('favicon.svg')} type="image/svg+xml" />
@@ -77,14 +78,27 @@ const schema = {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Space+Grotesk:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400;500&display=swap"
     />
 
-    <script is:inline>document.documentElement.classList.add('js');</script>
+    <script is:inline>
+      (() => {
+        const d = document.documentElement;
+        let pref = 'auto';
+        try {
+          pref = localStorage.getItem('tema') || 'auto';
+        } catch {}
+        const oscuro = pref === 'dark' || (pref === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
+        d.dataset.theme = oscuro ? 'dark' : 'light';
+        d.dataset.temaPref = pref;
+        d.classList.add('js');
+      })();
+    </script>
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   </head>
   <body>
     <BrandSprite />
+    <div class="progreso" aria-hidden="true"></div>
     <a class="saltar" href="#contenido">Saltar al contenido</a>
     <slot />
   </body>
