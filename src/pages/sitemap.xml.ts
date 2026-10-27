@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 
-const rutas = ['', 'privacidad', 'terminos'];
+const rutas = ['', 'cotizador', 'privacidad', 'terminos'];
 
 export const GET: APIRoute = ({ site }) => {
   const base = new URL(import.meta.env.BASE_URL, site);

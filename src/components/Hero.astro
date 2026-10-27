@@ -2,6 +2,7 @@
 import Icon from './Icon.astro';
 import WaButton from './WaButton.astro';
 import { TECNOLOGIAS_HERO, SITE } from '../data/site';
+import { asset } from '../lib/url';
 
 const titulo = 'Convertimos tus ideas en *software* que hace crecer tu negocio.'.split(' ');
 
@@ -52,8 +53,8 @@ const codigo = [
 
       <div class="hero__botones revelar" style="--retraso: 0.6s">
         <WaButton clave="general">Hablemos por WhatsApp</WaButton>
-        <a href="#servicios" class="btn btn--borde">
-          Ver servicios
+        <a href={asset('cotizador')} class="btn btn--borde">
+          Arma tu proyecto
           <Icon name="arrow" size={18} />
         </a>
       </div>

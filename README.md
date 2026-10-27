@@ -132,6 +132,20 @@ La URL del sitio (para Open Graph, canonical y JSON-LD) se toma sola del dominio
 **GitHub Pages**: el workflow `.github/workflows/deploy.yml` publica al hacer push a `main`. Activa **Settings → Pages → Source: GitHub Actions** y crea la variable `BASE_PATH` (`/landing_alphabytes`) si no usas dominio propio.
 **Netlify**: importa el repo; comando `npm run build`, carpeta `dist`.
 
+## Cotizador guiado (`/cotizador`)
+
+Asistente paso a paso para clientes que tienen una idea pero no saben exactamente qué necesitan. Al final arma un mensaje de WhatsApp ordenado (negocio, objetivos, solución, funciones, usuarios, plazo, presupuesto y contacto) para preparar la proforma.
+
+Todo se configura en **`src/data/cotizador.ts`**:
+
+- `NEGOCIOS`: tipos de negocio y qué objetivos se sugieren para cada uno (`sugiere`).
+- `OBJETIVOS`: qué soluciones recomienda cada objetivo (`soluciones`) y qué funciones sugiere (`funciones`).
+- `SOLUCIONES`: cada solución con su lista de funciones.
+- `USUARIOS`, `EXISTENTE`, `PLAZOS`, `PRESUPUESTOS_COTIZADOR`: opciones de los demás pasos.
+- `PASOS`: orden, títulos y textos de ayuda de cada paso.
+
+El sitio no guarda las respuestas: solo arman el texto que el cliente decide enviar por WhatsApp.
+
 ## Páginas legales
 
 - `/privacidad`: política de privacidad conforme a la LOPDP (cubre los contenidos del art. 12).
