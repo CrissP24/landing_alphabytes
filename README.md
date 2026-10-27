@@ -69,6 +69,8 @@ El formulario de contacto no usa servidor: valida los campos y abre WhatsApp con
 
 Los proyectos están en **`src/data/proyectos.ts`**. Cada uno tiene su ficha: qué es, para quién, qué incluye, tecnologías y demo.
 
+Mientras la lista `PROYECTOS` esté vacía, la sección muestra **"Portafolio en construcción"** con un botón para pedir demos por WhatsApp. En cuanto agregues el primer proyecto aparecen las tarjetas, los filtros y las fichas.
+
 - Con `demo`: la tarjeta muestra **Ver demo** con el enlace directo.
 - Sin `demo` o con `privado: true`: muestra **Pedir demo**, que abre WhatsApp con el nombre del proyecto.
 - `codigo` es opcional y solo se muestra dentro de la ficha si el proyecto no es privado.

@@ -8,6 +8,7 @@ const VISIBLES = 9;
 const categorias = CATEGORIAS.filter((c) => PROYECTOS.some((p) => p.categoria === c));
 const pedirDemo = (nombre: string) => waLink(MENSAJES.demo.replace('[NOMBRE]', nombre));
 const dominio = (url: string) => new URL(url).hostname.replace(/^www\./, '');
+const enConstruccion = PROYECTOS.length === 0;
 ---
 
 <section class="seccion seccion--alt" id="proyectos" aria-labelledby="proyectos-titulo">
@@ -15,12 +16,34 @@ const dominio = (url: string) => new URL(url).hostname.replace(/^www\./, '');
     <header class="cabecera revelar">
       <p class="etiqueta">// 03 · Portafolio</p>
       <h2 id="proyectos-titulo">Proyectos que <span class="acento">hablan por nosotros</span></h2>
-      <p>
-        Sistemas reales para municipios, centros de salud, instituciones educativas y negocios. Abre la ficha de cada
-        uno para ver qué hace y qué incluye.
-      </p>
+      {!enConstruccion && (
+        <p>
+          Sistemas reales para municipios, centros de salud, instituciones educativas y negocios. Abre la ficha de cada
+          uno para ver qué hace y qué incluye.
+        </p>
+      )}
     </header>
 
+    {enConstruccion ? (
+      <div class="obra revelar">
+        <span class="pixel obra__px obra__px--1"></span>
+        <span class="pixel obra__px obra__px--2"></span>
+        <div class="obra__barra" aria-hidden="true"><span></span></div>
+        <p class="obra__etiqueta">// Portafolio en construcción</p>
+        <h3>Estamos organizando nuestros proyectos</h3>
+        <p>
+          Muy pronto verás aquí los sistemas que hemos desarrollado. Mientras tanto, te mostramos demos a petición:
+          cuéntanos qué necesitas y te enseñamos un proyecto similar por videollamada o en persona.
+        </p>
+        <div class="obra__acciones">
+          <WaButton clave="demos">Pedir una demo</WaButton>
+          <a class="btn btn--borde" href={SITE.github} target="_blank" rel="noopener">
+            <Icon name="github" size={20} /> Ver GitHub
+          </a>
+        </div>
+      </div>
+    ) : (
+    <>
     <div class="filtros revelar" role="group" aria-label="Filtrar proyectos por categoría">
       <button type="button" aria-pressed="true" data-filtro="todos">Todos <span>{PROYECTOS.length}</span></button>
       {categorias.map((c) => (
@@ -80,6 +103,8 @@ const dominio = (url: string) => new URL(url).hostname.replace(/^www\./, '');
         <WaButton clave="cotizacion">Quiero un proyecto así</WaButton>
       </div>
     </div>
+    </>
+    )}
   </div>
 
   {PROYECTOS.map((p) => (
@@ -151,6 +176,91 @@ const dominio = (url: string) => new URL(url).hostname.replace(/^www\./, '');
 </section>
 
 <style>
+  .obra {
+    position: relative;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: clamp(32px, 6vw, 56px);
+    border: 1px dashed #343e63;
+    border-radius: var(--radio-l);
+    background: var(--tinta);
+    text-align: center;
+  }
+
+  .obra__px--1 {
+    top: 24px;
+    right: 28px;
+    animation: parpadeo 2.4s steps(1) infinite;
+  }
+
+  .obra__px--2 {
+    bottom: 28px;
+    left: 32px;
+    width: 7px;
+    height: 7px;
+    background: var(--indigo);
+  }
+
+  .obra__barra {
+    width: min(240px, 70%);
+    height: 6px;
+    margin: 0 auto 28px;
+    overflow: hidden;
+    border-radius: 3px;
+    background: var(--tinta-3);
+  }
+
+  .obra__barra span {
+    display: block;
+    width: 40%;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--lima);
+    animation: cargar 2.2s var(--ease) infinite;
+  }
+
+  .obra__etiqueta {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--lima);
+  }
+
+  .obra h3 {
+    margin-top: 14px;
+    font-size: clamp(24px, 3.5vw, 32px);
+  }
+
+  .obra > p:not(.obra__etiqueta) {
+    max-width: 560px;
+    margin: 14px auto 0;
+    color: var(--gris);
+  }
+
+  .obra__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  @keyframes cargar {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(250%);
+    }
+  }
+
+  @keyframes parpadeo {
+    50% {
+      opacity: 0.2;
+    }
+  }
+
   .filtros {
     display: flex;
     flex-wrap: wrap;
@@ -497,7 +607,7 @@ const dominio = (url: string) => new URL(url).hostname.replace(/^www\./, '');
 
 <script>
   const seccion = document.getElementById('proyectos')!;
-  const lista = seccion.querySelector<HTMLUListElement>('.proyectos')!;
+  const lista = seccion.querySelector<HTMLUListElement>('.proyectos');
   const filtros = seccion.querySelectorAll<HTMLButtonElement>('.filtros button');
   const verMas = document.getElementById('ver-mas') as HTMLButtonElement | null;
   const textoVerMas = verMas?.textContent;
@@ -506,8 +616,8 @@ const dominio = (url: string) => new URL(url).hostname.replace(/^www\./, '');
     b.addEventListener('click', () => {
       const filtro = b.dataset.filtro;
       filtros.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-      lista.classList.toggle('todos', filtro !== 'todos' || verMas?.getAttribute('aria-expanded') === 'true');
-      lista.querySelectorAll<HTMLLIElement>('.proyecto').forEach((li) => {
+      lista?.classList.toggle('todos', filtro !== 'todos' || verMas?.getAttribute('aria-expanded') === 'true');
+      lista?.querySelectorAll<HTMLLIElement>('.proyecto').forEach((li) => {
         li.hidden = filtro !== 'todos' && li.dataset.categoria !== filtro;
       });
       if (verMas) verMas.parentElement!.hidden = filtro !== 'todos';
@@ -518,7 +628,7 @@ const dominio = (url: string) => new URL(url).hostname.replace(/^www\./, '');
     const abrir = verMas.getAttribute('aria-expanded') !== 'true';
     verMas.setAttribute('aria-expanded', String(abrir));
     verMas.textContent = abrir ? 'Ver menos' : textoVerMas!;
-    lista.classList.toggle('todos', abrir);
+    lista?.classList.toggle('todos', abrir);
     if (!abrir) seccion.scrollIntoView();
   });
 

@@ -38,6 +38,7 @@ export const MENSAJES: Record<string, string> = {
   sistemas: 'Hola AlphaBytes, necesito instalar o reparar el sistema operativo de mi equipo.',
   cotizacion: 'Hola AlphaBytes, quisiera una cotización para un proyecto.',
   proyecto: 'Hola AlphaBytes, vi su proyecto [NOMBRE] en su portafolio y quiero algo similar.',
+  demos: 'Hola AlphaBytes, me gustaría ver una demo de sus proyectos. ¿Cuándo podemos coordinar?',
   demo: 'Hola AlphaBytes, me gustaría ver una demo del proyecto [NOMBRE]. ¿Cuándo podemos coordinar?',
 };
 
