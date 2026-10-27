@@ -4,6 +4,8 @@ import WaButton from './WaButton.astro';
 import ThemeToggle from './ThemeToggle.astro';
 import { asset } from '../lib/url';
 
+const raiz = asset('');
+
 const enlaces = [
   { id: 'servicios', texto: 'Servicios' },
   { id: 'proceso', texto: 'Proceso' },
@@ -16,7 +18,7 @@ const enlaces = [
 
 <header class="header" id="header">
   <div class="contenedor header__fila">
-    <a href="#inicio" class="header__logo" aria-label="AlphaBytes, ir al inicio">
+    <a href={`${raiz}#inicio`} class="header__logo" aria-label="AlphaBytes, ir al inicio">
       <img class="logo-oscuro" src={asset('logos/alphabytes-horizontal-negativo.svg')} alt="AlphaBytes" width="176" height="40" />
       <img class="logo-claro" src={asset('logos/alphabytes-horizontal-color.svg')} alt="" width="176" height="40" aria-hidden="true" />
     </a>
@@ -24,7 +26,7 @@ const enlaces = [
     <nav class="nav" aria-label="Principal">
       <ul class="nav__lista">
         {enlaces.map((e) => (
-          <li><a href={`#${e.id}`} class="nav__enlace" data-seccion={e.id}>{e.texto}</a></li>
+          <li><a href={`${raiz}#${e.id}`} class="nav__enlace" data-seccion={e.id}>{e.texto}</a></li>
         ))}
       </ul>
     </nav>
@@ -50,7 +52,7 @@ const enlaces = [
       <ul>
         {enlaces.map((e, i) => (
           <li style={`--i: ${i}`}>
-            <a href={`#${e.id}`} class="movil__enlace">
+            <a href={`${raiz}#${e.id}`} class="movil__enlace">
               <span class="movil__num">{String(i + 1).padStart(2, '0')}</span>
               {e.texto}
             </a>

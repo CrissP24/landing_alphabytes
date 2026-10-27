@@ -1,10 +1,20 @@
 ---
+import '@fontsource-variable/geist';
+import '@fontsource/geist-mono/400.css';
+import '@fontsource/geist-mono/500.css';
 import '../styles/global.css';
 import { SITE, REDES, SERVICIOS_SOFTWARE, SERVICIOS_TI } from '../data/site';
 import { asset } from '../lib/url';
 import BrandSprite from '../components/BrandSprite.astro';
 
-const canonical = new URL(import.meta.env.BASE_URL, Astro.site).href;
+interface Props {
+  titulo?: string;
+  descripcion?: string;
+  inicio?: boolean;
+}
+
+const { titulo = SITE.titulo, descripcion = SITE.descripcion, inicio = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL(asset('og-image-1200x630.png'), Astro.site).href;
 const logo = new URL(asset('android-chrome-512x512.png'), Astro.site).href;
 
@@ -13,7 +23,7 @@ const schema = {
   '@type': 'ProfessionalService',
   name: SITE.nombre,
   description: SITE.descripcion,
-  url: canonical,
+  url: new URL(import.meta.env.BASE_URL, Astro.site).href,
   logo,
   image: ogImage,
   telephone: SITE.whatsappVisible.replace(/\s/g, ''),
@@ -43,8 +53,8 @@ const schema = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{SITE.titulo}</title>
-    <meta name="description" content={SITE.descripcion} />
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
     <meta
       name="keywords"
       content="desarrollo web, aplicaciones móviles, software a medida, mantenimiento de computadoras, auditoría informática, redes, Jipijapa, Manabí, Ecuador"
@@ -62,24 +72,17 @@ const schema = {
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="es_EC" />
     <meta property="og:site_name" content={SITE.nombre} />
-    <meta property="og:title" content={SITE.titulo} />
-    <meta property="og:description" content={SITE.descripcion} />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descripcion} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="AlphaBytes · Desarrollo de software" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={SITE.titulo} />
-    <meta name="twitter:description" content={SITE.descripcion} />
+    <meta name="twitter:title" content={titulo} />
+    <meta name="twitter:description" content={descripcion} />
     <meta name="twitter:image" content={ogImage} />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400;500&display=swap"
-    />
 
     <script is:inline>
       (() => {
@@ -94,7 +97,7 @@ const schema = {
         d.classList.add('js');
       })();
     </script>
-    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    {inicio && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
   </head>
   <body>
     <BrandSprite />
@@ -103,3 +106,8 @@ const schema = {
     <slot />
   </body>
 </html>
+
+<script>
+  import '../scripts/whatsapp';
+  import '../scripts/animaciones';
+</script>

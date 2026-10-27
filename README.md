@@ -94,6 +94,8 @@ Ejemplo de un proyecto privado:
 
 ## Pendientes por completar
 
+- [ ] **Datos legales del responsable** (obligatorios por la LOPDP, art. 12 num. 8) → `SITE.titular` (nombre o razón social), `SITE.identificacion` (RUC o cédula) y `SITE.direccion` (domicilio). Se muestran en `/privacidad` y `/terminos`.
+
 Estos datos no se inventaron; mientras estén vacíos, no aparecen en la web:
 
 - [ ] **Redes sociales**: Facebook, Instagram, LinkedIn, TikTok → `REDES`
@@ -129,6 +131,13 @@ La URL del sitio (para Open Graph, canonical y JSON-LD) se toma sola del dominio
 
 **GitHub Pages**: el workflow `.github/workflows/deploy.yml` publica al hacer push a `main`. Activa **Settings → Pages → Source: GitHub Actions** y crea la variable `BASE_PATH` (`/landing_alphabytes`) si no usas dominio propio.
 **Netlify**: importa el repo; comando `npm run build`, carpeta `dist`.
+
+## Páginas legales
+
+- `/privacidad`: política de privacidad conforme a la LOPDP (cubre los contenidos del art. 12).
+- `/terminos`: términos y condiciones de uso.
+- Si cambias cómo tratas los datos (por ejemplo, agregas Google Analytics, un formulario con servidor o un boletín), **actualiza la política** y su fecha.
+- Las fuentes se sirven desde el propio sitio (`@fontsource`), así que no se envían datos de los visitantes a Google.
 
 ## Tema claro y oscuro
 

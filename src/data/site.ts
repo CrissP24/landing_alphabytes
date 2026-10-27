@@ -14,6 +14,10 @@ export const SITE = {
   horarioSchema: 'Mo-Su 09:00-18:00',
   github: 'https://github.com/crissp24',
   aniosExperiencia: '',
+  // Datos obligatorios para la política de privacidad (LOPDP, art. 12 num. 8).
+  titular: '',
+  identificacion: '',
+  direccion: '',
 };
 
 // Deja en '' las redes que no tengas: no se mostrarán.

@@ -23,6 +23,7 @@ const nombresRed: Record<string, string> = {
 
 const redes = Object.entries(REDES).filter(([, url]) => url);
 const anio = new Date().getFullYear();
+const raiz = asset('');
 ---
 
 <footer class="footer">
@@ -48,7 +49,7 @@ const anio = new Date().getFullYear();
       <nav aria-label="Enlaces rápidos">
         <h2>Navegación</h2>
         <ul>
-          {secciones.map(([id, texto]) => <li><a href={`#${id}`}>{texto}</a></li>)}
+          {secciones.map(([id, texto]) => <li><a href={`${raiz}#${id}`}>{texto}</a></li>)}
         </ul>
       </nav>
 
@@ -74,7 +75,10 @@ const anio = new Date().getFullYear();
 
     <div class="footer__legal">
       <p>© {anio} AlphaBytes. Todos los derechos reservados.</p>
-      <p class="footer__mono">Hecho con código limpio en {SITE.ciudad}</p>
+      <ul class="footer__legales">
+        <li><a href={asset('privacidad')}>Política de privacidad</a></li>
+        <li><a href={asset('terminos')}>Términos y condiciones</a></li>
+      </ul>
     </div>
   </div>
 </footer>
@@ -151,7 +155,7 @@ const anio = new Date().getFullYear();
     color: var(--acento);
   }
 
-  .footer ul:not(.redes) {
+  .footer__fila ul:not(.redes) {
     display: grid;
     gap: 10px;
     color: var(--texto-2);
@@ -178,11 +182,18 @@ const anio = new Date().getFullYear();
     font-size: 14px;
   }
 
-  .footer__mono {
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+  .footer__legales {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+
+  .footer__legales a {
+    transition: color 0.2s;
+  }
+
+  .footer__legales a:hover {
+    color: var(--titulo);
   }
 
   @media (min-width: 680px) {

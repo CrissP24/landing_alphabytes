@@ -1,0 +1,165 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { SITE } from '../data/site';
+import { asset } from '../lib/url';
+
+const secciones = [
+  { id: 'identificacion', titulo: 'Identificación' },
+  { id: 'objeto', titulo: 'Objeto y aceptación' },
+  { id: 'servicios', titulo: 'Servicios y cotizaciones' },
+  { id: 'comunicaciones', titulo: 'Comunicaciones electrónicas' },
+  { id: 'propiedad', titulo: 'Propiedad intelectual' },
+  { id: 'proyectos', titulo: 'Proyectos y confidencialidad' },
+  { id: 'uso', titulo: 'Uso del sitio' },
+  { id: 'responsabilidad', titulo: 'Responsabilidad' },
+  { id: 'privacidad', titulo: 'Datos personales' },
+  { id: 'ley', titulo: 'Ley aplicable' },
+];
+
+const titular = SITE.titular ? `${SITE.titular}, bajo el nombre comercial AlphaBytes` : 'AlphaBytes';
+const direccion = SITE.direccion || `${SITE.ciudad}, ${SITE.provincia}, ${SITE.pais}`;
+const n = (id: string) => String(secciones.findIndex((s) => s.id === id) + 1).padStart(2, '0');
+---
+
+<Legal
+  titulo="Términos y condiciones"
+  descripcion="Condiciones de uso de este sitio web y reglas generales para cotizar y contratar los servicios de AlphaBytes."
+  archivo="terminos.md"
+  actualizado="27 de octubre de 2026"
+  secciones={secciones}
+>
+  <p>
+    Te pedimos leer estos términos antes de usar el sitio. Están escritos en lenguaje sencillo y no reemplazan la
+    propuesta o el contrato que firmemos para cada proyecto, que prevalecen en lo que regulen de forma específica.
+  </p>
+
+  <section id="identificacion">
+    <h2><span class="num">{n('identificacion')}</span>Identificación del titular</h2>
+    <div class="tabla">
+      <table>
+        <tbody>
+          <tr><th scope="row">Titular</th><td>{titular}</td></tr>
+          {SITE.identificacion && <tr><th scope="row">RUC / Cédula</th><td>{SITE.identificacion}</td></tr>}
+          <tr><th scope="row">Domicilio</th><td>{direccion}</td></tr>
+          <tr><th scope="row">Contacto</th><td>{SITE.whatsappVisible} · {SITE.correo}</td></tr>
+          <tr><th scope="row">Horario</th><td>{SITE.horario}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="objeto">
+    <h2><span class="num">{n('objeto')}</span>Objeto y aceptación</h2>
+    <p>
+      Este sitio presenta los servicios de desarrollo de software, soporte técnico e infraestructura de AlphaBytes y
+      facilita el contacto con nosotros. Al navegarlo aceptas estos términos; si no estás de acuerdo, te pedimos no
+      utilizarlo.
+    </p>
+  </section>
+
+  <section id="servicios">
+    <h2><span class="num">{n('servicios')}</span>Servicios y cotizaciones</h2>
+    <ul>
+      <li>
+        La información del sitio es referencial y describe de forma general lo que hacemos. El alcance, precio, plazos,
+        forma de pago y garantías de cada trabajo se definen en una <strong>propuesta escrita</strong> aceptada por ambas
+        partes.
+      </li>
+      <li>
+        Las cotizaciones son gratuitas y no obligan a contratar. Tienen la vigencia que se indique en ellas y pueden
+        cambiar si cambia el alcance del proyecto.
+      </li>
+      <li>
+        Cuando publiquemos precios, incluirán los impuestos aplicables, conforme a la Ley Orgánica de Defensa del
+        Consumidor.
+      </li>
+      <li>
+        El soporte y mantenimiento posteriores a la entrega se rigen por lo acordado en cada propuesta o plan de soporte.
+      </li>
+    </ul>
+  </section>
+
+  <section id="comunicaciones">
+    <h2><span class="num">{n('comunicaciones')}</span>Comunicaciones electrónicas</h2>
+    <p>
+      Los botones y el formulario del sitio abren WhatsApp con un mensaje sugerido que tú puedes editar antes de
+      enviarlo. Los acuerdos, aceptaciones de propuestas y demás comunicaciones que intercambiemos por WhatsApp o correo
+      electrónico son mensajes de datos con validez jurídica conforme a la
+      <strong>Ley de Comercio Electrónico, Firmas Electrónicas y Mensajes de Datos</strong>.
+    </p>
+    <p>
+      El uso de WhatsApp está sujeto además a las condiciones y la política de privacidad de su proveedor.
+    </p>
+  </section>
+
+  <section id="propiedad">
+    <h2><span class="num">{n('propiedad')}</span>Propiedad intelectual</h2>
+    <p>
+      El nombre y logotipo de AlphaBytes, los textos, el diseño, las ilustraciones y el código de este sitio están
+      protegidos por el <strong>Código Orgánico de la Economía Social de los Conocimientos, Creatividad e
+      Innovación</strong> y no pueden copiarse, modificarse ni usarse con fines comerciales sin autorización escrita.
+    </p>
+    <p>
+      Los nombres y logotipos de tecnologías que aparecen en el sitio (por ejemplo, React, Python o Docker) pertenecen a
+      sus respectivos titulares y se muestran solo para indicar las herramientas con las que trabajamos.
+    </p>
+    <p>
+      La titularidad y las licencias del software que desarrollemos para cada cliente se establecen en la propuesta o el
+      contrato del proyecto.
+    </p>
+  </section>
+
+  <section id="proyectos">
+    <h2><span class="num">{n('proyectos')}</span>Proyectos, demos y confidencialidad</h2>
+    <p>
+      Las demos de proyectos se muestran a petición. No publicamos información confidencial de nuestros clientes y solo
+      mostramos trabajos o capturas cuando contamos con su autorización. La información que nos compartas para cotizar o
+      desarrollar un proyecto se trata como confidencial.
+    </p>
+  </section>
+
+  <section id="uso">
+    <h2><span class="num">{n('uso')}</span>Uso del sitio</h2>
+    <p>Al usar el sitio te comprometes a no:</p>
+    <ul>
+      <li>Usarlo con fines ilícitos o que afecten derechos de terceros.</li>
+      <li>Intentar acceder sin autorización a sistemas, cuentas o información.</li>
+      <li>Sobrecargarlo, introducir código malicioso o interferir con su funcionamiento.</li>
+      <li>Suplantar la identidad de AlphaBytes o usar su marca sin permiso.</li>
+    </ul>
+  </section>
+
+  <section id="responsabilidad">
+    <h2><span class="num">{n('responsabilidad')}</span>Responsabilidad</h2>
+    <p>
+      Trabajamos para que el sitio esté disponible y su información sea correcta y actual, pero puede haber interrupciones
+      por mantenimiento o causas ajenas a nosotros. Los enlaces a sitios de terceros se ofrecen por comodidad; no
+      controlamos su contenido ni sus políticas.
+    </p>
+    <p>
+      Nada de lo indicado en estos términos limita los derechos que la Ley Orgánica de Defensa del Consumidor reconoce a
+      los consumidores, que son irrenunciables.
+    </p>
+  </section>
+
+  <section id="privacidad">
+    <h2><span class="num">{n('privacidad')}</span>Datos personales</h2>
+    <p>
+      El tratamiento de tus datos se explica en nuestra <a href={asset('privacidad')}>Política de privacidad</a>, conforme
+      a la Ley Orgánica de Protección de Datos Personales.
+    </p>
+  </section>
+
+  <section id="ley">
+    <h2><span class="num">{n('ley')}</span>Ley aplicable y controversias</h2>
+    <p>
+      Estos términos se rigen por las leyes de la República del Ecuador. Ante cualquier desacuerdo buscaremos primero una
+      solución directa y amistosa; de no lograrse, las partes podrán acudir a mediación o a los jueces competentes de
+      {SITE.ciudad}, provincia de {SITE.provincia}, sin perjuicio de los derechos que la ley reconoce a los consumidores.
+    </p>
+    <p>
+      Podemos actualizar estos términos. La versión vigente siempre estará publicada en esta página con su fecha de
+      actualización.
+    </p>
+  </section>
+</Legal>
