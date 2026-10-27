@@ -132,19 +132,19 @@ La URL del sitio (para Open Graph, canonical y JSON-LD) se toma sola del dominio
 **GitHub Pages**: el workflow `.github/workflows/deploy.yml` publica al hacer push a `main`. Activa **Settings → Pages → Source: GitHub Actions** y crea la variable `BASE_PATH` (`/landing_alphabytes`) si no usas dominio propio.
 **Netlify**: importa el repo; comando `npm run build`, carpeta `dist`.
 
-## Cotizador guiado (`/cotizador`)
+## Onboarding del cotizador (`/cotizador`)
 
-Asistente paso a paso para clientes que tienen una idea pero no saben exactamente qué necesitan. Al final arma un mensaje de WhatsApp ordenado (negocio, objetivos, solución, funciones, usuarios, plazo, presupuesto y contacto) para preparar la proforma.
+Experiencia a pantalla completa para clientes que tienen una idea pero no saben exactamente qué necesitan. Un asistente los guía con una pregunta por pantalla, reacciona a sus respuestas, recomienda la solución y al final genera un resumen con alcance estimado y el mensaje de WhatsApp listo para enviar.
 
-Todo se configura en **`src/data/cotizador.ts`**:
-
-- `NEGOCIOS`: tipos de negocio y qué objetivos se sugieren para cada uno (`sugiere`).
-- `OBJETIVOS`: qué soluciones recomienda cada objetivo (`soluciones`) y qué funciones sugiere (`funciones`).
-- `SOLUCIONES`: cada solución con su lista de funciones.
-- `USUARIOS`, `EXISTENTE`, `PLAZOS`, `PRESUPUESTOS_COTIZADOR`: opciones de los demás pasos.
-- `PASOS`: orden, títulos y textos de ayuda de cada paso.
-
-El sitio no guarda las respuestas: solo arman el texto que el cliente decide enviar por WhatsApp.
+- Componente: `src/components/Onboarding.astro`.
+- Contenido: **`src/data/cotizador.ts`**.
+  - `NEGOCIOS`: tipos de negocio, objetivos sugeridos (`sugiere`) y la frase del asistente (`reaccion`).
+  - `OBJETIVOS`: qué soluciones recomienda cada objetivo (`soluciones`) y qué funciones sugiere (`funciones`).
+  - `SOLUCIONES`: funciones disponibles y `stack` sugerido de cada solución.
+  - `USUARIOS`, `EXISTENTE`, `PLAZOS`, `PRESUPUESTOS_COTIZADOR`: opciones del resto de pasos.
+  - `PASOS`: orden, títulos (`{nombre}` se reemplaza por el nombre del cliente) y textos de ayuda.
+- Atajos: `Enter` para continuar y `1`–`9` para elegir opciones.
+- El sitio no guarda las respuestas: solo arman el texto que el cliente decide enviar.
 
 ## Páginas legales
 

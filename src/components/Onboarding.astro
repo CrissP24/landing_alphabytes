@@ -1,0 +1,2158 @@
+---
+import Icon from './Icon.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import { asset } from '../lib/url';
+import { PASOS, SOLUCIONES, PRESUPUESTOS_COTIZADOR } from '../data/cotizador';
+
+const total = PASOS.length;
+const orbita = SOLUCIONES.map((s) => ({ id: s.id, icono: s.icono! }));
+const sugerenciasExtras = [
+  'Tengo una página de referencia que me gusta',
+  'Necesito migrar datos desde Excel',
+  'Quiero capacitación para mi equipo',
+  'Debe funcionar en celulares',
+  'Necesito que sea en varios idiomas',
+];
+---
+
+<div class="ob" data-fase="inicio">
+  <aside class="lienzo siempre-oscuro" aria-hidden="true">
+    <div class="lienzo__arriba">
+      <img src={asset('logos/alphabytes-horizontal-negativo.svg')} alt="" width="140" height="32" />
+    </div>
+
+    <div class="orbita">
+      <div class="orbita__anillo orbita__anillo--1"></div>
+      <div class="orbita__anillo orbita__anillo--2"></div>
+      <div class="orbita__centro">
+        <svg viewBox="0 0 100 100" width="64" height="64">
+          <rect width="100" height="100" rx="24" fill="#5B4BFF"></rect>
+          <path d="M71 30 C64 54 57 71 42 71 C30 71 25 62 25 51 C25 39 32 31 43 31 C56 31 61 55 74 71" fill="none" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke="#FFFFFF"></path>
+          <rect x="76" y="19" width="10" height="10" rx="2" fill="#C6F432"></rect>
+        </svg>
+      </div>
+      {orbita.map((o, i) => (
+        <span class="orbita__nodo" data-nodo={o.id} style={`--a: ${i * 60}deg`}>
+          <span><Icon name={o.icono} size={22} /></span>
+        </span>
+      ))}
+    </div>
+
+    <div class="lienzo__texto">
+      <p class="lienzo__paso mono" data-lienzo-paso>bienvenida</p>
+      <p class="lienzo__titulo" data-lienzo-titulo>Tu proyecto empieza aquí</p>
+    </div>
+
+    <pre class="construccion mono" data-construccion></pre>
+  </aside>
+
+  <section class="escena" aria-labelledby="ob-titulo">
+    <header class="escena__barra">
+      <a class="escena__logo" href={asset('')} aria-label="AlphaBytes, ir al inicio">
+        <img class="logo-oscuro" src={asset('logos/alphabytes-horizontal-negativo.svg')} alt="" width="130" height="30" />
+        <img class="logo-claro" src={asset('logos/alphabytes-horizontal-color.svg')} alt="" width="130" height="30" />
+      </a>
+      <div class="escena__progreso" role="progressbar" aria-label="Progreso" aria-valuemin="0" aria-valuemax={total} aria-valuenow="0">
+        <span data-barra></span>
+      </div>
+      <span class="escena__contador mono" data-contador hidden></span>
+      <ThemeToggle />
+      <a class="escena__salir" href={asset('')}>
+        <Icon name="x" size={16} /><span>Salir</span>
+      </a>
+    </header>
+
+    <div class="escena__cuerpo">
+      <div class="pantalla pantalla--inicio" data-pantalla="inicio">
+        <div class="asistente">
+          <span class="asistente__avatar" aria-hidden="true">α</span>
+          <p class="burbuja">¡Hola! 👋 Soy el asistente de AlphaBytes.</p>
+        </div>
+        <h1 id="ob-titulo" class="pantalla__titulo">Armemos tu proyecto <span class="acento">en 3 minutos</span></h1>
+        <p class="pantalla__ayuda">
+          No necesitas saber de tecnología. Te haré algunas preguntas, te sugeriré lo que mejor funciona para tu negocio y al
+          final tendrás un resumen listo para enviarnos por WhatsApp.
+        </p>
+        <ul class="inicio__puntos">
+          <li><span class="mono">01</span> Respondes con un clic</li>
+          <li><span class="mono">02</span> Recibes recomendaciones</li>
+          <li><span class="mono">03</span> Nos envías tu proyecto</li>
+        </ul>
+        <div class="pantalla__acciones">
+          <button type="button" class="btn btn--indigo btn--grande" data-empezar>
+            Empezar <Icon name="arrow" size={18} />
+          </button>
+          <span class="tecla-ayuda mono">o presiona <kbd>Enter ↵</kbd></span>
+        </div>
+      </div>
+
+      <form class="pasos" id="onboarding" novalidate hidden>
+        {PASOS.map((paso, i) => (
+          <fieldset class="pantalla paso" data-paso={i} data-id={paso.id} hidden>
+            <legend class="sr-only">{paso.titulo.replace('{nombre}, ', '')}</legend>
+            <div class="asistente" aria-live="polite">
+              <span class="asistente__avatar" aria-hidden="true">α</span>
+              <p class="burbuja" data-burbuja>
+                <span class="escribiendo" aria-hidden="true"><i></i><i></i><i></i></span>
+              </p>
+            </div>
+
+            <h2 class="pantalla__titulo" tabindex="-1" data-titulo={paso.titulo}>{paso.titulo.replace('{nombre}, ', '')}</h2>
+            <p class="pantalla__ayuda">{paso.ayuda}</p>
+
+            {paso.tipo === 'nombre' && (
+              <div class="campo-grande">
+                <input name="nombre" type="text" autocomplete="given-name" placeholder="Escribe tu nombre" aria-label="Tu nombre" maxlength="60" />
+                <span class="campo-grande__linea"></span>
+              </div>
+            )}
+
+            {(paso.tipo === 'unica' || paso.tipo === 'multiple') && (
+              <div class:list={['tarjetas', paso.opciones!.length > 6 && 'tarjetas--muchas', paso.opciones!.some((o) => o.valor) && 'tarjetas--valor', !paso.opciones!.some((o) => o.icono || o.valor) && 'tarjetas--chips']}>
+                {paso.opciones!.map((o, n) => (
+                  <label class="tarjeta" data-op={o.id} style={`--i: ${n}`}>
+                    <input type={paso.tipo === 'unica' ? 'radio' : 'checkbox'} name={paso.id} value={o.id} />
+                    <span class="tarjeta__caja">
+                      {n < 9 && <kbd class="tarjeta__tecla" aria-hidden="true">{n + 1}</kbd>}
+                      {o.icono && <span class="tarjeta__icono"><Icon name={o.icono} size={22} /></span>}
+                      {o.valor && <span class="tarjeta__valor mono">{o.valor}</span>}
+                      <span class="tarjeta__texto">
+                        <span class="tarjeta__titulo">{o.texto}</span>
+                        {o.detalle && <span class="tarjeta__detalle">{o.detalle}</span>}
+                      </span>
+                      <span class="tarjeta__check" aria-hidden="true"><Icon name="check" size={13} /></span>
+                      <span class="tarjeta__sugerido mono">Sugerido</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            )}
+
+            {paso.tipo === 'soluciones' && (
+              <div class="soluciones">
+                <div class="tarjetas tarjetas--soluciones">
+                  {SOLUCIONES.map((s, n) => (
+                    <label class="tarjeta tarjeta--solucion" data-op={s.id} style={`--i: ${n}`}>
+                      <input type="checkbox" name="soluciones" value={s.id} />
+                      <span class="tarjeta__caja">
+                        <kbd class="tarjeta__tecla" aria-hidden="true">{n + 1}</kbd>
+                        <span class="tarjeta__icono"><Icon name={s.icono!} size={22} /></span>
+                        <span class="tarjeta__texto">
+                          <span class="tarjeta__titulo">{s.texto}</span>
+                          <span class="tarjeta__detalle">{s.detalle}</span>
+                          <span class="tarjeta__motivo" data-motivo></span>
+                        </span>
+                        <span class="tarjeta__check" aria-hidden="true"><Icon name="check" size={13} /></span>
+                        <span class="tarjeta__sugerido mono">Recomendado</span>
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {paso.tipo === 'funciones' && (
+              <div class="funciones">
+                {SOLUCIONES.map((s) => (
+                  <div class="funciones__grupo" data-solucion={s.id} hidden>
+                    <p class="funciones__titulo mono"><Icon name={s.icono!} size={14} /> {s.texto}</p>
+                    <div class="chips">
+                      {s.funciones.map((f) => (
+                        <label class="chip-op" data-op={f.id}>
+                          <input type="checkbox" name="funciones" value={f.id} />
+                          <span><Icon name="check" size={13} /> {f.texto}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {paso.tipo === 'presupuesto' && (
+              <div class="rango">
+                <output class="rango__valor" data-rango-valor>{PRESUPUESTOS_COTIZADOR[1].texto}</output>
+                <input
+                  type="range"
+                  name="presupuesto-indice"
+                  min="0"
+                  max={PRESUPUESTOS_COTIZADOR.length - 1}
+                  step="1"
+                  value="1"
+                  aria-label="Presupuesto aproximado"
+                  aria-valuetext={PRESUPUESTOS_COTIZADOR[1].texto}
+                />
+                <div class="rango__marcas mono" aria-hidden="true">
+                  {PRESUPUESTOS_COTIZADOR.map((p) => <span>{p.texto}</span>)}
+                </div>
+                <label class="rango__asesoria">
+                  <input type="checkbox" name="asesoria" />
+                  <span>No estoy seguro, prefiero que me asesoren</span>
+                </label>
+              </div>
+            )}
+
+            {paso.tipo === 'extras' && (
+              <div class="extras">
+                <div class="extras__fila">
+                  <input name="empresa" type="text" autocomplete="organization" placeholder="Nombre de tu negocio (opcional)" aria-label="Nombre de tu negocio" />
+                  <input name="ciudad" type="text" autocomplete="address-level2" placeholder="Ciudad (opcional)" aria-label="Ciudad" />
+                </div>
+                <textarea name="detalles" rows="4" placeholder="Cuéntanos cómo trabajas hoy, qué problema quieres resolver o cualquier idea que tengas." aria-label="Detalles adicionales"></textarea>
+                <div class="chips chips--sugerencias">
+                  {sugerenciasExtras.map((t) => (
+                    <button type="button" class="chip-sugerencia" data-agregar={t}>+ {t}</button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <p class="paso__error" role="alert" data-error></p>
+          </fieldset>
+        ))}
+      </form>
+
+      <div class="pantalla pantalla--analizando" data-pantalla="analizando" hidden>
+        <div class="analisis siempre-oscuro" aria-live="polite">
+          <p class="analisis__cmd mono"><span>~$</span> alphabytes analizar --proyecto</p>
+          <ol class="analisis__log mono" data-log></ol>
+        </div>
+      </div>
+
+      <div class="pantalla pantalla--listo" data-pantalla="listo" hidden>
+        <div class="confeti" aria-hidden="true" data-confeti></div>
+        <div class="asistente">
+          <span class="asistente__avatar" aria-hidden="true">α</span>
+          <p class="burbuja" data-burbuja-final></p>
+        </div>
+        <h2 class="pantalla__titulo" tabindex="-1" data-titulo-final>Tu proyecto está listo</h2>
+
+        <article class="resultado">
+          <header class="resultado__cabecera">
+            <p class="mono">proyecto.alphabytes</p>
+            <span class="resultado__alcance" data-alcance></span>
+          </header>
+          <div class="resultado__soluciones" data-res-soluciones></div>
+          <div class="resultado__bloque">
+            <p class="resultado__etiqueta mono">Funciones</p>
+            <div class="resultado__chips" data-res-funciones></div>
+          </div>
+          <dl class="resultado__datos" data-res-datos></dl>
+          <div class="resultado__bloque">
+            <p class="resultado__etiqueta mono">Stack sugerido</p>
+            <div class="resultado__chips resultado__chips--stack" data-res-stack></div>
+          </div>
+        </article>
+
+        <details class="mensaje">
+          <summary><Icon name="whatsapp" size={16} /> Ver el mensaje que se enviará</summary>
+          <pre class="mensaje__burbuja" data-mensaje></pre>
+        </details>
+
+        <div class="pantalla__acciones pantalla__acciones--final">
+          <button type="button" class="btn btn--wa btn--grande" data-enviar>
+            <Icon name="whatsapp" size={20} /> Enviar por WhatsApp
+          </button>
+          <button type="button" class="btn btn--borde" data-copiar>Copiar mensaje</button>
+          <button type="button" class="enlace-sutil" data-revisar>Revisar mis respuestas</button>
+        </div>
+        <p class="pantalla__legal">
+          Se abrirá WhatsApp con el mensaje listo; tú decides si lo envías. Usamos tus datos solo para preparar tu proforma ·
+          <a href={asset('privacidad')}>Privacidad</a>
+        </p>
+      </div>
+    </div>
+
+    <footer class="escena__pie" data-pie hidden>
+      <button type="button" class="btn btn--borde btn--sm" data-atras>
+        <span aria-hidden="true">←</span> Atrás
+      </button>
+      <button type="button" class="enlace-sutil" data-omitir hidden>Omitir</button>
+      <span class="tecla-ayuda mono">Enter ↵</span>
+      <button type="button" class="btn btn--indigo" data-siguiente>
+        Continuar <Icon name="arrow" size={18} />
+      </button>
+    </footer>
+  </section>
+</div>
+
+<style>
+  .ob {
+    display: grid;
+    min-height: 100dvh;
+  }
+
+  /* ---------- Lienzo lateral ---------- */
+  .lienzo {
+    position: relative;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 32px 40px;
+    background:
+      radial-gradient(circle at 50% 42%, rgb(91 75 255 / 0.28), transparent 55%),
+      linear-gradient(to right, rgb(233 235 242 / 0.04) 1px, transparent 1px) 0 0 / 48px 48px,
+      linear-gradient(to bottom, rgb(233 235 242 / 0.04) 1px, transparent 1px) 0 0 / 48px 48px,
+      var(--bg);
+    color: var(--texto);
+  }
+
+  .lienzo__arriba img {
+    height: 30px;
+    width: auto;
+  }
+
+  .orbita {
+    position: relative;
+    width: min(340px, 80%);
+    aspect-ratio: 1;
+    margin: auto auto 0;
+  }
+
+  .orbita__anillo {
+    position: absolute;
+    inset: 0;
+    border: 1px dashed rgb(233 235 242 / 0.14);
+    border-radius: 50%;
+    animation: girar 60s linear infinite;
+  }
+
+  .orbita__anillo--2 {
+    inset: 22%;
+    border-style: solid;
+    border-color: rgb(233 235 242 / 0.08);
+    animation-direction: reverse;
+    animation-duration: 40s;
+  }
+
+  .orbita__centro {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    translate: -50% -50%;
+    filter: drop-shadow(0 18px 40px rgb(91 75 255 / 0.6));
+    animation: flotar 6s ease-in-out infinite;
+  }
+
+  .orbita__nodo {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 64px;
+    height: 64px;
+    margin: -32px 0 0 -32px;
+    transform: rotate(var(--a)) translateY(-170%) rotate(calc(var(--a) * -1));
+    transition: transform 0.6s var(--ease);
+  }
+
+  .orbita__nodo > span {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    border: 1px solid rgb(233 235 242 / 0.16);
+    border-radius: 50%;
+    background: rgb(16 22 42 / 0.8);
+    color: var(--texto-2);
+    backdrop-filter: blur(6px);
+    transition:
+      background-color 0.4s,
+      color 0.4s,
+      border-color 0.4s,
+      box-shadow 0.4s,
+      scale 0.4s var(--ease);
+  }
+
+  .orbita__nodo.recomendado > span {
+    border-color: var(--indigo-claro);
+    color: var(--titulo);
+    box-shadow: 0 0 0 6px rgb(91 75 255 / 0.18);
+  }
+
+  .orbita__nodo.activo > span {
+    border-color: var(--lima);
+    background: var(--lima);
+    color: var(--tinta);
+    box-shadow: 0 0 0 8px rgb(198 244 50 / 0.15);
+    scale: 1.12;
+  }
+
+  .lienzo__texto {
+    margin-top: 40px;
+  }
+
+  .lienzo__paso {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--lima);
+  }
+
+  .lienzo__titulo {
+    margin-top: 10px;
+    font-size: clamp(28px, 2.6vw, 38px);
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    color: var(--titulo);
+  }
+
+  .construccion {
+    min-height: 168px;
+    margin: 28px 0 auto;
+    padding: 16px 18px;
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    background: rgb(11 15 26 / 0.7);
+    font-size: 12.5px;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    color: var(--texto-2);
+  }
+
+  .construccion :global(.k) {
+    color: #9a90ff;
+  }
+
+  .construccion :global(.s) {
+    color: var(--lima);
+  }
+
+  .construccion :global(.nueva) {
+    display: inline-block;
+    animation: entrar-linea 0.6s var(--ease);
+  }
+
+  /* ---------- Escena ---------- */
+  .escena {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    background: var(--bg);
+  }
+
+  .escena__barra {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px clamp(16px, 4vw, 40px);
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(10px);
+  }
+
+  .escena__logo img {
+    height: 26px;
+    width: auto;
+  }
+
+  .logo-claro,
+  :global([data-theme='light']) .logo-oscuro {
+    display: none;
+  }
+
+  :global([data-theme='light']) .logo-claro {
+    display: block;
+  }
+
+  .escena__progreso {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--bg-3);
+    overflow: hidden;
+  }
+
+  .escena__progreso span {
+    display: block;
+    height: 100%;
+    width: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--indigo), var(--lima));
+    transform: scaleX(var(--p, 0));
+    transform-origin: left;
+    transition: transform 0.6s var(--ease);
+  }
+
+  .escena__contador {
+    font-size: 12px;
+    color: var(--texto-2);
+  }
+
+  .escena__salir {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 10px;
+    border: 1px solid var(--borde);
+    border-radius: 9px;
+    font-size: 13.5px;
+    color: var(--texto-2);
+    transition:
+      color 0.2s,
+      border-color 0.2s;
+  }
+
+  .escena__salir:hover {
+    border-color: var(--borde-fuerte);
+    color: var(--titulo);
+  }
+
+  .escena__cuerpo {
+    flex: 1;
+    display: grid;
+    align-items: center;
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: clamp(24px, 5vh, 56px) clamp(16px, 4vw, 40px) 40px;
+  }
+
+  .pantalla {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .pantalla:not([hidden]) {
+    animation: entrar-pantalla 0.55s var(--ease);
+  }
+
+  .pantalla.atras:not([hidden]) {
+    animation-name: entrar-pantalla-atras;
+  }
+
+  .asistente {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+  }
+
+  .asistente__avatar {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--indigo);
+    font-family: var(--mono);
+    font-weight: 500;
+    color: var(--blanco);
+    position: relative;
+  }
+
+  .asistente__avatar::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--lima);
+  }
+
+  .burbuja {
+    max-width: 520px;
+    min-height: 40px;
+    padding: 10px 14px;
+    border: 1px solid var(--borde);
+    border-radius: 14px 14px 14px 4px;
+    background: var(--bg-2);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--texto);
+  }
+
+  .burbuja :global(.texto-burbuja) {
+    animation: aparecer 0.4s var(--ease);
+  }
+
+  .escribiendo {
+    display: inline-flex;
+    gap: 4px;
+    padding: 6px 2px;
+  }
+
+  .escribiendo i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--texto-3);
+    animation: puntos 1s ease-in-out infinite;
+  }
+
+  .escribiendo i:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+
+  .escribiendo i:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  .pantalla__titulo {
+    margin-top: 28px;
+    font-size: clamp(28px, 4.2vw, 44px);
+    line-height: 1.06;
+    letter-spacing: -0.04em;
+    outline: none;
+  }
+
+  .pantalla__ayuda {
+    margin-top: 12px;
+    max-width: 580px;
+    color: var(--texto-2);
+    font-size: 16.5px;
+  }
+
+  .pantalla__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    margin-top: 36px;
+  }
+
+  .btn--grande {
+    --alto: 56px;
+    padding: 0 28px;
+    font-size: 16.5px;
+  }
+
+  .tecla-ayuda {
+    font-size: 12px;
+    color: var(--texto-3);
+  }
+
+  kbd {
+    display: inline-grid;
+    place-items: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border: 1px solid var(--borde-fuerte);
+    border-bottom-width: 2px;
+    border-radius: 6px;
+    background: var(--bg-2);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--texto-2);
+  }
+
+  .inicio__puntos {
+    display: grid;
+    gap: 10px;
+    margin-top: 28px;
+  }
+
+  .inicio__puntos li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15.5px;
+    color: var(--titulo);
+    animation: aparecer 0.6s var(--ease) both;
+  }
+
+  .inicio__puntos li:nth-child(2) {
+    animation-delay: 0.12s;
+  }
+
+  .inicio__puntos li:nth-child(3) {
+    animation-delay: 0.24s;
+  }
+
+  .inicio__puntos .mono {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    background: var(--bg-2);
+    font-size: 12px;
+    color: var(--acento);
+  }
+
+  /* ---------- Campo de nombre ---------- */
+  .campo-grande {
+    position: relative;
+    margin-top: 32px;
+  }
+
+  .campo-grande input {
+    width: 100%;
+    padding: 8px 0 12px;
+    border: 0;
+    border-bottom: 2px solid var(--borde-fuerte);
+    background: transparent;
+    font-size: clamp(26px, 4vw, 38px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--titulo);
+    outline: none;
+  }
+
+  .campo-grande input::placeholder {
+    color: var(--texto-3);
+  }
+
+  .campo-grande__linea {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--indigo), var(--lima));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s var(--ease);
+  }
+
+  .campo-grande input:focus + .campo-grande__linea {
+    transform: none;
+  }
+
+  /* ---------- Tarjetas ---------- */
+  .tarjetas {
+    display: grid;
+    gap: 10px;
+    margin-top: 28px;
+  }
+
+  .tarjeta {
+    position: relative;
+    display: block;
+    cursor: pointer;
+    animation: aparecer 0.5s var(--ease) both;
+    animation-delay: calc(var(--i) * 40ms + 0.1s);
+  }
+
+  .tarjeta input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .tarjeta__caja {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    background: var(--bg-2);
+    transition:
+      border-color 0.2s,
+      background-color 0.2s,
+      translate 0.25s var(--ease),
+      box-shadow 0.25s;
+  }
+
+  .tarjeta:hover .tarjeta__caja {
+    translate: 0 -2px;
+    border-color: var(--borde-fuerte);
+    box-shadow: var(--sombra);
+  }
+
+  .tarjeta input:focus-visible + .tarjeta__caja {
+    outline: 2px solid var(--acento);
+    outline-offset: 2px;
+  }
+
+  .tarjeta input:checked + .tarjeta__caja {
+    border-color: var(--acento);
+    background: color-mix(in srgb, var(--acento) 9%, var(--bg-2));
+  }
+
+  .tarjeta input:checked + .tarjeta__caja {
+    animation: pulsar 0.35s var(--ease);
+  }
+
+  .tarjeta__tecla {
+    flex: none;
+  }
+
+  .tarjeta input:checked + .tarjeta__caja .tarjeta__tecla {
+    border-color: var(--acento);
+    color: var(--acento);
+  }
+
+  .tarjeta__icono {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    background: var(--bg-3);
+    color: var(--acento-2);
+    transition:
+      background-color 0.25s,
+      color 0.25s,
+      rotate 0.4s var(--ease);
+  }
+
+  .tarjeta input:checked + .tarjeta__caja .tarjeta__icono {
+    background: var(--lima);
+    color: var(--tinta);
+    rotate: -6deg;
+  }
+
+  .tarjeta__valor {
+    flex: none;
+    min-width: 76px;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--titulo);
+  }
+
+  .tarjeta__texto {
+    display: grid;
+    flex: 1;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .tarjeta__titulo {
+    font-size: 15.5px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--titulo);
+  }
+
+  .tarjeta__detalle {
+    font-size: 13.5px;
+    color: var(--texto-2);
+  }
+
+  .tarjeta__motivo {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--acento);
+  }
+
+  .tarjeta__motivo:empty {
+    display: none;
+  }
+
+  .tarjeta__check {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid var(--borde-fuerte);
+    border-radius: 50%;
+    color: transparent;
+    transition:
+      background-color 0.2s,
+      border-color 0.2s,
+      color 0.2s,
+      scale 0.3s var(--ease);
+  }
+
+  .tarjeta input[type='checkbox'] + .tarjeta__caja .tarjeta__check {
+    border-radius: 7px;
+  }
+
+  .tarjeta input:checked + .tarjeta__caja .tarjeta__check {
+    border-color: var(--lima);
+    background: var(--lima);
+    color: var(--tinta);
+    scale: 1.08;
+  }
+
+  .tarjeta__sugerido {
+    position: absolute;
+    top: -9px;
+    right: 14px;
+    display: none;
+    padding: 1px 8px;
+    border-radius: 5px;
+    background: var(--indigo);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--blanco);
+  }
+
+  .tarjeta[data-sugerido] .tarjeta__sugerido {
+    display: block;
+  }
+
+  .tarjeta[data-sugerido]:not(:has(input:checked)) .tarjeta__caja {
+    border-style: dashed;
+    border-color: color-mix(in srgb, var(--indigo) 60%, var(--borde));
+  }
+
+  .tarjetas--chips {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .tarjetas--chips .tarjeta__caja {
+    padding: 10px 14px;
+    border-radius: 999px;
+  }
+
+  .tarjetas--chips .tarjeta__tecla {
+    display: none;
+  }
+
+  /* ---------- Chips de funciones ---------- */
+  .funciones {
+    display: grid;
+    gap: 22px;
+    margin-top: 28px;
+  }
+
+  .funciones__titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--texto-2);
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .chip-op {
+    cursor: pointer;
+  }
+
+  .chip-op input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .chip-op span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 14px;
+    border: 1px solid var(--borde);
+    border-radius: 999px;
+    background: var(--bg-2);
+    font-size: 14.5px;
+    color: var(--texto);
+    transition:
+      border-color 0.2s,
+      background-color 0.2s,
+      color 0.2s,
+      translate 0.2s var(--ease);
+  }
+
+  .chip-op span :global(svg) {
+    width: 0;
+    margin-right: -7px;
+    color: var(--tinta);
+    transition:
+      width 0.25s var(--ease),
+      margin 0.25s var(--ease);
+  }
+
+  .chip-op:hover span {
+    translate: 0 -1px;
+    border-color: var(--borde-fuerte);
+  }
+
+  .chip-op input:focus-visible + span {
+    outline: 2px solid var(--acento);
+    outline-offset: 2px;
+  }
+
+  .chip-op input:checked + span {
+    border-color: var(--lima);
+    background: var(--lima);
+    color: var(--tinta);
+    font-weight: 500;
+  }
+
+  .chip-op input:checked + span :global(svg) {
+    width: 13px;
+    margin-right: 0;
+  }
+
+  /* ---------- Rango ---------- */
+  .rango {
+    margin-top: 36px;
+  }
+
+  .rango__valor {
+    display: block;
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    color: var(--titulo);
+    transition: opacity 0.2s;
+  }
+
+  .rango.asesoria .rango__valor {
+    opacity: 0.35;
+  }
+
+  .rango input[type='range'] {
+    width: 100%;
+    margin-top: 22px;
+    appearance: none;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--indigo), var(--lima)) 0 0 / var(--lleno, 33%) 100% no-repeat, var(--bg-3);
+    cursor: pointer;
+  }
+
+  .rango input[type='range']::-webkit-slider-thumb {
+    appearance: none;
+    width: 26px;
+    height: 26px;
+    border: 3px solid var(--bg);
+    border-radius: 8px;
+    background: var(--lima);
+    box-shadow: 0 4px 14px rgb(0 0 0 / 0.3);
+    transition: scale 0.2s var(--ease);
+  }
+
+  .rango input[type='range']::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border: 3px solid var(--bg);
+    border-radius: 8px;
+    background: var(--lima);
+  }
+
+  .rango input[type='range']:active::-webkit-slider-thumb {
+    scale: 1.15;
+  }
+
+  .rango__marcas {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    font-size: 11.5px;
+    color: var(--texto-3);
+  }
+
+  .rango__asesoria {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 28px;
+    font-size: 15px;
+    color: var(--texto);
+    cursor: pointer;
+  }
+
+  .rango__asesoria input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--indigo);
+  }
+
+  /* ---------- Extras ---------- */
+  .extras {
+    display: grid;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .extras__fila {
+    display: grid;
+    gap: 12px;
+  }
+
+  .extras input,
+  .extras textarea {
+    width: 100%;
+    padding: 13px 15px;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    background: var(--bg-2);
+    font-size: 16px;
+    color: var(--texto);
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+
+  .extras textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .extras ::placeholder {
+    color: var(--texto-3);
+  }
+
+  .extras input:focus,
+  .extras textarea:focus {
+    outline: none;
+    border-color: var(--indigo);
+    box-shadow: 0 0 0 3px rgb(91 75 255 / 0.25);
+  }
+
+  .chip-sugerencia {
+    padding: 7px 12px;
+    border: 1px dashed var(--borde-fuerte);
+    border-radius: 999px;
+    background: transparent;
+    font-size: 13.5px;
+    color: var(--texto-2);
+    transition:
+      border-color 0.2s,
+      color 0.2s,
+      opacity 0.3s;
+  }
+
+  .chip-sugerencia:hover {
+    border-color: var(--acento);
+    color: var(--acento);
+  }
+
+  .chip-sugerencia.usada {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .paso__error {
+    min-height: 1.4em;
+    margin-top: 14px;
+    font-size: 14.5px;
+    color: #ef4444;
+  }
+
+  .paso__error:not(:empty) {
+    animation: sacudir 0.35s;
+  }
+
+  /* ---------- Pie ---------- */
+  .escena__pie {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px clamp(16px, 4vw, 40px) calc(14px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--borde);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px);
+  }
+
+  .escena__pie[hidden] {
+    display: none;
+  }
+
+  .escena__pie .tecla-ayuda {
+    display: none;
+    margin-left: auto;
+  }
+
+  .escena__pie [data-siguiente] {
+    margin-left: auto;
+  }
+
+  .enlace-sutil {
+    padding: 6px 4px;
+    border: 0;
+    background: none;
+    font-size: 14.5px;
+    color: var(--texto-2);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .enlace-sutil:hover {
+    color: var(--titulo);
+  }
+
+  .enlace-sutil[hidden] {
+    display: none;
+  }
+
+  /* ---------- Análisis ---------- */
+  .analisis {
+    padding: 22px 24px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-l);
+    background: var(--bg-2);
+    box-shadow: var(--sombra);
+  }
+
+  .analisis__cmd {
+    font-size: 13.5px;
+    color: var(--titulo);
+  }
+
+  .analisis__cmd span {
+    color: var(--lima);
+  }
+
+  .analisis__log {
+    display: grid;
+    gap: 8px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13.5px;
+    color: var(--texto-2);
+  }
+
+  .analisis__log :global(li) {
+    display: flex;
+    gap: 10px;
+    animation: aparecer 0.35s var(--ease);
+  }
+
+  .analisis__log :global(li b) {
+    font-weight: 500;
+    color: var(--lima);
+  }
+
+  .analisis__log :global(li em) {
+    font-style: normal;
+    color: var(--texto);
+  }
+
+  /* ---------- Resultado ---------- */
+  .pantalla--listo {
+    position: relative;
+  }
+
+  .resultado {
+    margin-top: 28px;
+    overflow: hidden;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-l);
+    background: var(--bg-2);
+    box-shadow: var(--sombra);
+    animation: aparecer 0.6s var(--ease) 0.15s both;
+  }
+
+  .resultado__cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--borde);
+    background: var(--bg);
+    font-size: 12px;
+    color: var(--texto-3);
+  }
+
+  .resultado__alcance {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--texto-2);
+  }
+
+  .resultado__alcance :global(i) {
+    display: inline-flex;
+    gap: 3px;
+  }
+
+  .resultado__alcance :global(i b) {
+    width: 14px;
+    height: 6px;
+    border-radius: 2px;
+    background: var(--bg-3);
+  }
+
+  .resultado__alcance :global(i b.on) {
+    background: var(--lima);
+  }
+
+  .resultado__soluciones {
+    display: grid;
+    gap: 10px;
+    padding: 18px;
+  }
+
+  .resultado__soluciones :global(div) {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .resultado__soluciones :global(span) {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: var(--lima);
+    color: var(--tinta);
+  }
+
+  .resultado__soluciones :global(strong) {
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--titulo);
+  }
+
+  .resultado__bloque {
+    padding: 0 18px 18px;
+  }
+
+  .resultado__etiqueta {
+    font-size: 11.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--texto-3);
+  }
+
+  .resultado__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .resultado__chips :global(span) {
+    padding: 5px 10px;
+    border: 1px solid var(--borde);
+    border-radius: 999px;
+    background: var(--bg);
+    font-size: 13.5px;
+    color: var(--texto);
+  }
+
+  .resultado__chips--stack :global(span) {
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .resultado__datos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin: 0 18px 18px;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .resultado__datos :global(div) {
+    padding: 12px 14px;
+    border-right: 1px solid var(--borde);
+    border-bottom: 1px solid var(--borde);
+    background: var(--bg);
+  }
+
+  .resultado__datos :global(div:nth-child(2n)) {
+    border-right: 0;
+  }
+
+  .resultado__datos :global(div:nth-last-child(-n + 2)) {
+    border-bottom: 0;
+  }
+
+  .resultado__datos :global(dt) {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texto-3);
+  }
+
+  .resultado__datos :global(dd) {
+    margin: 2px 0 0;
+    font-size: 14.5px;
+    color: var(--titulo);
+  }
+
+  .mensaje {
+    margin-top: 16px;
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    background: var(--bg-2);
+  }
+
+  .mensaje summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--titulo);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .mensaje summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mensaje summary :global(svg) {
+    color: var(--whatsapp);
+  }
+
+  .mensaje__burbuja {
+    margin: 0 16px 16px;
+    padding: 14px 16px;
+    border-radius: 4px 14px 14px 14px;
+    border: 1px solid color-mix(in srgb, var(--whatsapp) 30%, var(--borde));
+    background: color-mix(in srgb, var(--whatsapp) 12%, var(--bg));
+    font-family: var(--fuente);
+    font-size: 14.5px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: var(--texto);
+  }
+
+  .mensaje__burbuja :global(b) {
+    color: var(--titulo);
+  }
+
+  .pantalla__acciones--final {
+    position: sticky;
+    bottom: 0;
+    z-index: 4;
+    margin: 20px calc(clamp(16px, 4vw, 40px) * -1) 0;
+    padding: 14px clamp(16px, 4vw, 40px) calc(14px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--borde);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px);
+  }
+
+  .pantalla__legal {
+    margin-top: 18px;
+    font-size: 13px;
+    color: var(--texto-3);
+  }
+
+  .pantalla__legal a {
+    color: var(--acento);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .confeti {
+    position: absolute;
+    inset: -40px 0 auto;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .confeti :global(i) {
+    position: absolute;
+    top: 0;
+    left: var(--x);
+    width: var(--t);
+    height: var(--t);
+    border-radius: 2px;
+    background: var(--c);
+    animation: caer var(--d) cubic-bezier(0.2, 0.7, 0.4, 1) forwards;
+  }
+
+  /* ---------- Animaciones ---------- */
+  @keyframes entrar-pantalla {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+  }
+
+  @keyframes entrar-pantalla-atras {
+    from {
+      opacity: 0;
+      transform: translateY(-24px);
+    }
+  }
+
+  @keyframes aparecer {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+
+  @keyframes entrar-linea {
+    from {
+      opacity: 0;
+      background: rgb(198 244 50 / 0.25);
+    }
+  }
+
+  @keyframes pulsar {
+    50% {
+      transform: scale(0.98);
+    }
+  }
+
+  @keyframes puntos {
+    0%,
+    100% {
+      opacity: 0.3;
+      transform: translateY(0);
+    }
+    50% {
+      opacity: 1;
+      transform: translateY(-3px);
+    }
+  }
+
+  @keyframes sacudir {
+    25% {
+      transform: translateX(-4px);
+    }
+    75% {
+      transform: translateX(4px);
+    }
+  }
+
+  @keyframes girar {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  @keyframes flotar {
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  @keyframes caer {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) rotate(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(var(--dx), 420px) rotate(var(--r));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .escena__logo,
+    .escena__salir span {
+      display: none;
+    }
+
+    .resultado__datos {
+      grid-template-columns: 1fr;
+    }
+
+    .resultado__datos :global(div) {
+      border-right: 0;
+    }
+
+    .resultado__datos :global(div:nth-last-child(2)) {
+      border-bottom: 1px solid var(--borde);
+    }
+
+    .rango__marcas span:nth-child(2),
+    .rango__marcas span:nth-child(3) {
+      display: none;
+    }
+  }
+
+  @media (min-width: 640px) {
+    .tarjetas:not(.tarjetas--chips) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .extras__fila {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .escena__pie .tecla-ayuda {
+      display: inline;
+    }
+
+    .escena__pie [data-siguiente] {
+      margin-left: 0;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .ob {
+      grid-template-columns: minmax(380px, 0.85fr) 1.15fr;
+    }
+
+    .lienzo {
+      position: sticky;
+      top: 0;
+      display: flex;
+      height: 100dvh;
+    }
+
+    .escena__logo {
+      display: none;
+    }
+  }
+
+  @media (hover: none) {
+    .tecla-ayuda,
+    .tarjeta__tecla {
+      display: none !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .orbita__anillo,
+    .orbita__centro {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import { abrirWhatsApp } from '../scripts/whatsapp';
+  import {
+    PASOS,
+    NEGOCIOS,
+    OBJETIVOS,
+    SOLUCIONES,
+    USUARIOS,
+    EXISTENTE,
+    PLAZOS,
+    PRESUPUESTOS_COTIZADOR,
+  } from '../data/cotizador';
+
+  type Lista = { id: string; texto: string }[];
+
+  const raiz = document.querySelector<HTMLElement>('.ob')!;
+  const form = document.getElementById('onboarding') as HTMLFormElement;
+  const pasos = [...form.querySelectorAll<HTMLFieldSetElement>('.paso')];
+  const pantallaInicio = raiz.querySelector<HTMLElement>('[data-pantalla="inicio"]')!;
+  const pantallaAnalisis = raiz.querySelector<HTMLElement>('[data-pantalla="analizando"]')!;
+  const pantallaListo = raiz.querySelector<HTMLElement>('[data-pantalla="listo"]')!;
+  const pie = raiz.querySelector<HTMLElement>('[data-pie]')!;
+  const btnAtras = raiz.querySelector<HTMLButtonElement>('[data-atras]')!;
+  const btnSiguiente = raiz.querySelector<HTMLButtonElement>('[data-siguiente]')!;
+  const btnOmitir = raiz.querySelector<HTMLButtonElement>('[data-omitir]')!;
+  const barra = raiz.querySelector<HTMLElement>('[data-barra]')!;
+  const progreso = raiz.querySelector<HTMLElement>('.escena__progreso')!;
+  const contador = raiz.querySelector<HTMLElement>('[data-contador]')!;
+  const lienzoPaso = raiz.querySelector<HTMLElement>('[data-lienzo-paso]')!;
+  const lienzoTitulo = raiz.querySelector<HTMLElement>('[data-lienzo-titulo]')!;
+  const construccion = raiz.querySelector<HTMLElement>('[data-construccion]')!;
+  const nodos = [...raiz.querySelectorAll<HTMLElement>('[data-nodo]')];
+  const rangoInput = form.querySelector<HTMLInputElement>('input[type="range"]')!;
+  const rangoValor = form.querySelector<HTMLOutputElement>('[data-rango-valor]')!;
+  const asesoria = form.querySelector<HTMLInputElement>('input[name="asesoria"]')!;
+
+  const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const FUNCIONES = SOLUCIONES.flatMap((s) => s.funciones.map((f) => ({ ...f, solucion: s.id })));
+  const texto = (lista: Lista, id: string) => lista.find((o) => o.id === id)?.texto ?? id;
+  const textos = (lista: Lista, ids: string[]) => ids.map((id) => texto(lista, id));
+  const escapar = (s: string) =>
+    s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+
+  let actual = -1;
+  let presupuestoElegido = '';
+  const visitados = new Set<string>();
+  let lineasPrevias = new Set<string>();
+
+  function leer() {
+    const d = new FormData(form);
+    const uno = (k: string) => String(d.get(k) ?? '').trim();
+    const varios = (k: string) => d.getAll(k).map(String);
+    return {
+      nombre: uno('nombre'),
+      negocio: uno('negocio'),
+      objetivos: varios('objetivos'),
+      soluciones: varios('soluciones'),
+      funciones: varios('funciones'),
+      usuarios: uno('usuarios'),
+      existente: varios('existente'),
+      plazo: uno('plazo'),
+      presupuesto: asesoria.checked ? 'Necesito asesoría' : presupuestoElegido,
+      empresa: uno('empresa'),
+      ciudad: uno('ciudad'),
+      detalles: uno('detalles'),
+    };
+  }
+
+  type Datos = ReturnType<typeof leer>;
+  const primerNombre = (d: Datos) => d.nombre.split(/\s+/)[0] ?? '';
+
+  function recomendadas(d: Datos) {
+    const puntos = new Map<string, { p: number; motivos: string[] }>();
+    OBJETIVOS.filter((o) => d.objetivos.includes(o.id)).forEach((o) =>
+      o.soluciones.forEach((s, i) => {
+        const r = puntos.get(s) ?? { p: 0, motivos: [] };
+        r.p += i === 0 ? 2 : 1;
+        r.motivos.push(o.texto.toLowerCase());
+        puntos.set(s, r);
+      }),
+    );
+    const max = Math.max(0, ...[...puntos.values()].map((r) => r.p));
+    return new Map([...puntos].filter(([, r]) => r.p >= Math.max(2, max - 1)));
+  }
+
+  function mensajeAsistente(id: string, d: Datos) {
+    const nombre = primerNombre(d);
+    const negocio = NEGOCIOS.find((n) => n.id === d.negocio);
+    switch (id) {
+      case 'nombre':
+        return 'Te haré unas preguntas rápidas para entender tu proyecto. ¿Empezamos?';
+      case 'negocio':
+        return `¡Mucho gusto, ${nombre}! Cuéntame un poco sobre tu negocio.`;
+      case 'objetivos':
+        return negocio?.reaccion ?? 'Ahora cuéntame qué quieres lograr.';
+      case 'soluciones': {
+        const n = d.objetivos.length;
+        return n > 2
+          ? `${n} objetivos, ¡ambicioso! Analicé tus respuestas y armé una recomendación.`
+          : 'Perfecto. Según lo que me contaste, esto es lo que mejor te funcionaría.';
+      }
+      case 'funciones':
+        return `Buena elección: ${textos(SOLUCIONES, d.soluciones).join(' + ')}. Te marqué las funciones que suelen necesitarse.`;
+      case 'usuarios':
+        return `Vamos muy bien, ${nombre}. Ya tenemos la base del proyecto.`;
+      case 'existente':
+        return d.usuarios === 'publico'
+          ? 'Si lo usarán tus clientes, cuidaremos que sea muy fácil de usar.'
+          : d.usuarios === 'solo'
+            ? 'Perfecto, lo haremos simple y práctico para ti.'
+            : 'Entendido, definiremos qué puede hacer cada persona.';
+      case 'plazo':
+        if (d.existente.includes('excel')) return 'Pasar de Excel a un sistema es de los cambios que más se notan.';
+        if (d.existente.includes('nada')) return 'Empezar desde cero nos permite hacerlo bien desde el inicio.';
+        return 'Genial, aprovecharemos lo que ya tienes.';
+      case 'presupuesto':
+        return d.plazo === 'urgente'
+          ? 'Entendido, priorizaremos lo esencial para llegar a tiempo.'
+          : 'Perfecto, así podemos planificar con calma.';
+      case 'extras':
+        return `Último paso, ${nombre}. Si quieres, déjanos más detalles.`;
+      default:
+        return '';
+    }
+  }
+
+  function escribirBurbuja(burbuja: HTMLElement, mensaje: string) {
+    burbuja.innerHTML = '<span class="escribiendo" aria-hidden="true"><i></i><i></i><i></i></span>';
+    setTimeout(
+      () => {
+        burbuja.innerHTML = `<span class="texto-burbuja">${escapar(mensaje)}</span>`;
+      },
+      reducido ? 0 : 650,
+    );
+  }
+
+  function marcarSugeridos(paso: HTMLElement, ids: Iterable<string>) {
+    const set = new Set(ids);
+    paso.querySelectorAll<HTMLElement>('[data-op]').forEach((op) => op.toggleAttribute('data-sugerido', set.has(op.dataset.op!)));
+  }
+
+  function prepararPaso(i: number) {
+    const paso = pasos[i];
+    const def = PASOS[i];
+    const d = leer();
+    const primeraVez = !visitados.has(def.id);
+    visitados.add(def.id);
+
+    const titulo = paso.querySelector<HTMLElement>('[data-titulo]')!;
+    const plantilla = titulo.dataset.titulo!;
+    titulo.textContent = d.nombre ? plantilla.replace('{nombre}', primerNombre(d)) : plantilla.replace('{nombre}, ', '');
+    if (titulo.textContent) titulo.textContent = titulo.textContent[0].toUpperCase() + titulo.textContent.slice(1);
+
+    escribirBurbuja(paso.querySelector<HTMLElement>('[data-burbuja]')!, mensajeAsistente(def.id, d));
+
+    if (def.id === 'objetivos') {
+      marcarSugeridos(paso, NEGOCIOS.find((n) => n.id === d.negocio)?.sugiere ?? []);
+    }
+
+    if (def.id === 'soluciones') {
+      const rec = recomendadas(d);
+      marcarSugeridos(paso, rec.keys());
+      paso.querySelectorAll<HTMLElement>('.tarjeta--solucion').forEach((t) => {
+        const r = rec.get(t.dataset.op!);
+        t.querySelector<HTMLElement>('[data-motivo]')!.textContent = r ? `→ para ${r.motivos.slice(0, 2).join(' y ')}` : '';
+        if (primeraVez && r) t.querySelector('input')!.checked = true;
+      });
+      const contenedor = paso.querySelector<HTMLElement>('.tarjetas')!;
+      [...contenedor.children]
+        .sort((a, b) => Number(b.hasAttribute('data-sugerido')) - Number(a.hasAttribute('data-sugerido')))
+        .forEach((el, n) => {
+          (el as HTMLElement).style.setProperty('--i', String(n));
+          contenedor.append(el);
+        });
+    }
+
+    if (def.id === 'funciones') {
+      const sugeridas = new Set(OBJETIVOS.filter((o) => d.objetivos.includes(o.id)).flatMap((o) => o.funciones));
+      paso.querySelectorAll<HTMLElement>('[data-solucion]').forEach((g) => {
+        const visible = d.soluciones.includes(g.dataset.solucion!);
+        g.hidden = !visible;
+        g.querySelectorAll<HTMLInputElement>('input').forEach((x) => {
+          if (!visible) x.checked = false;
+          else if (primeraVez && sugeridas.has(x.value)) x.checked = true;
+        });
+      });
+      marcarSugeridos(paso, sugeridas);
+    }
+
+    if (def.id === 'presupuesto') actualizarRango();
+  }
+
+  function validar(i: number) {
+    const def = PASOS[i];
+    const error = pasos[i].querySelector<HTMLElement>('[data-error]')!;
+    const d = leer();
+    let mensaje = '';
+    if (def.id === 'nombre' && d.nombre.length < 2) mensaje = 'Escribe tu nombre para continuar.';
+    else if (def.requerido && def.id !== 'nombre') {
+      const valor = d[def.id as keyof Datos];
+      if (Array.isArray(valor) ? !valor.length : !valor) {
+        mensaje = def.tipo === 'unica' ? 'Elige una opción para continuar.' : 'Elige al menos una opción para continuar.';
+      }
+    }
+    error.textContent = mensaje;
+    return !mensaje;
+  }
+
+  function actualizarUI() {
+    const enPasos = actual >= 0 && actual < pasos.length;
+    pie.hidden = !enPasos;
+    btnAtras.disabled = false;
+    btnOmitir.hidden = !enPasos || !PASOS[actual]?.omitible;
+    const pct = actual < 0 ? 0 : Math.min(1, (actual + 1) / pasos.length);
+    barra.parentElement!.style.setProperty('--p', String(pct));
+    progreso.setAttribute('aria-valuenow', String(Math.max(0, actual + 1)));
+    contador.hidden = !enPasos;
+    contador.textContent = `${String(actual + 1).padStart(2, '0')} / ${pasos.length}`;
+    btnSiguiente.innerHTML =
+      actual === pasos.length - 1
+        ? 'Ver mi proyecto <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'
+        : 'Continuar <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
+
+    if (enPasos) {
+      lienzoPaso.textContent = `paso ${String(actual + 1).padStart(2, '0')} · ${PASOS[actual].id}`;
+      lienzoTitulo.textContent = PASOS[actual].panel;
+    }
+    pintarLienzo();
+  }
+
+  function mostrar(el: HTMLElement, atras = false) {
+    [pantallaInicio, form, pantallaAnalisis, pantallaListo, ...pasos].forEach((p) => {
+      if (p !== el && p !== form) p.hidden = true;
+    });
+    el.classList.toggle('atras', atras);
+    el.hidden = false;
+  }
+
+  function ir(i: number, atras = false) {
+    if (i < 0) {
+      actual = -1;
+      form.hidden = true;
+      mostrar(pantallaInicio, true);
+      raiz.dataset.fase = 'inicio';
+      actualizarUI();
+      return;
+    }
+    if (i >= pasos.length) return analizar();
+
+    actual = i;
+    form.hidden = false;
+    raiz.dataset.fase = 'pasos';
+    prepararPaso(i);
+    mostrar(pasos[i], atras);
+    pasos[i].querySelector<HTMLElement>('[data-error]')!.textContent = '';
+    actualizarUI();
+    scrollTo({ top: 0, behavior: reducido ? 'auto' : 'smooth' });
+
+    const foco = pasos[i].querySelector<HTMLInputElement>('input[type="text"]') ?? pasos[i].querySelector<HTMLElement>('[data-titulo]');
+    setTimeout(() => foco?.focus({ preventScroll: true }), reducido ? 0 : 350);
+  }
+
+  function siguiente() {
+    if (actual < 0) return ir(0);
+    if (!validar(actual)) return;
+    if (PASOS[actual].id === 'presupuesto' && !asesoria.checked) {
+      presupuestoElegido = PRESUPUESTOS_COTIZADOR[Number(rangoInput.value)].texto;
+    }
+    ir(actual + 1);
+  }
+
+  function omitir() {
+    const def = PASOS[actual];
+    if (def.id === 'presupuesto') {
+      presupuestoElegido = '';
+      asesoria.checked = false;
+    }
+    ir(actual + 1);
+  }
+
+  function actualizarRango() {
+    const i = Number(rangoInput.value);
+    const t = PRESUPUESTOS_COTIZADOR[i].texto;
+    rangoValor.textContent = asesoria.checked ? 'Que me asesoren' : t;
+    rangoInput.setAttribute('aria-valuetext', t);
+    rangoInput.style.setProperty('--lleno', `${(i / (PRESUPUESTOS_COTIZADOR.length - 1)) * 100}%`);
+    rangoInput.closest('.rango')!.classList.toggle('asesoria', asesoria.checked);
+  }
+
+  function pintarLienzo() {
+    const d = leer();
+    const rec = actual >= 3 || raiz.dataset.fase === 'listo' ? new Map() : recomendadas(d);
+    nodos.forEach((n) => {
+      n.classList.toggle('activo', d.soluciones.includes(n.dataset.nodo!));
+      n.classList.toggle('recomendado', rec.has(n.dataset.nodo!));
+    });
+
+    const filas: [string, string][] = [
+      ['cliente', d.nombre],
+      ['negocio', d.negocio ? texto(NEGOCIOS, d.negocio) : ''],
+      ['objetivos', d.objetivos.length ? `${d.objetivos.length} elegidos` : ''],
+      ['solucion', textos(SOLUCIONES, d.soluciones).join(' + ')],
+      ['funciones', d.funciones.length ? `${d.funciones.length} funciones` : ''],
+      ['usuarios', d.usuarios ? (USUARIOS.find((u) => u.id === d.usuarios)?.valor ?? '') : ''],
+      ['plazo', d.plazo ? (PLAZOS.find((p) => p.id === d.plazo)?.valor ?? '') : ''],
+      ['inversion', d.presupuesto],
+    ];
+    const llenas = filas.filter(([, v]) => v);
+    const nuevas = new Set(llenas.map(([k, v]) => `${k}:${v}`));
+    const cuerpo = llenas
+      .map(([k, v]) => {
+        const linea = `  <span class="k">${k}</span>: <span class="s">"${escapar(v)}"</span>`;
+        return lineasPrevias.has(`${k}:${v}`) ? linea : `<span class="nueva">${linea}</span>`;
+      })
+      .join(',\n');
+    lineasPrevias = nuevas;
+    construccion.innerHTML = `<span class="k">const</span> proyecto = {\n${cuerpo || '  <span style="opacity:.5">// se completa con tus respuestas</span>'}\n}`;
+  }
+
+  function usuariosTexto(d: Datos) {
+    const u = USUARIOS.find((x) => x.id === d.usuarios);
+    if (!u) return '';
+    return u.id === 'publico' || u.id === 'solo' ? u.texto : `${u.texto} (${u.valor} personas)`;
+  }
+
+  function alcance(d: Datos) {
+    const puntos = d.soluciones.length * 2 + d.funciones.length + (['grande', 'publico'].includes(d.usuarios) ? 2 : 0);
+    if (puntos <= 6) return { nivel: 1, texto: 'Básico' };
+    if (puntos <= 12) return { nivel: 2, texto: 'Intermedio' };
+    return { nivel: 3, texto: 'Avanzado' };
+  }
+
+  function construirMensaje(d: Datos) {
+    const l: string[] = ['Hola AlphaBytes 👋 Armé mi proyecto en su asistente:', ''];
+    const add = (k: string, v: string) => v && l.push(`*${k}:* ${v}`);
+    add('Cliente', [d.nombre, d.empresa, d.ciudad].filter(Boolean).join(' · '));
+    add('Tipo de negocio', d.negocio ? texto(NEGOCIOS, d.negocio) : '');
+    add('Objetivos', textos(OBJETIVOS, d.objetivos).join(', '));
+    add('Solución', textos(SOLUCIONES, d.soluciones).join(' + '));
+    const grupos = d.soluciones
+      .map((s) => {
+        const fs = FUNCIONES.filter((f) => f.solucion === s && d.funciones.includes(f.id)).map((f) => f.texto);
+        return fs.length ? `• ${texto(SOLUCIONES, s)}: ${fs.join(', ')}` : '';
+      })
+      .filter(Boolean);
+    if (grupos.length) l.push('*Funciones:*', ...grupos);
+    add('Usuarios', usuariosTexto(d));
+    add('Ya cuento con', textos(EXISTENTE, d.existente).join(', '));
+    add('Plazo', d.plazo ? `${texto(PLAZOS, d.plazo)} (${PLAZOS.find((p) => p.id === d.plazo)?.valor})` : '');
+    add('Presupuesto', d.presupuesto || 'Por definir');
+    add('Alcance estimado', alcance(d).texto);
+    add('Detalles', d.detalles);
+    l.push('', '¿Me pueden preparar una proforma?');
+    return l.join('\n');
+  }
+
+  function analizar() {
+    const d = leer();
+    actual = pasos.length;
+    form.hidden = true;
+    raiz.dataset.fase = 'analizando';
+    mostrar(pantallaAnalisis);
+    pie.hidden = true;
+    barra.parentElement!.style.setProperty('--p', '1');
+    lienzoPaso.textContent = 'analizando';
+    lienzoTitulo.textContent = 'Armando tu proyecto…';
+
+    const stack = [...new Set(SOLUCIONES.filter((s) => d.soluciones.includes(s.id)).flatMap((s) => s.stack))];
+    const lineas = [
+      ['leyendo respuestas', `${d.objetivos.length} objetivos`],
+      ['definiendo solución', textos(SOLUCIONES, d.soluciones).join(' + ')],
+      ['seleccionando tecnologías', stack.join(', ')],
+      ['estimando alcance', alcance(d).texto],
+      ['generando resumen para WhatsApp', 'listo'],
+    ];
+    const log = pantallaAnalisis.querySelector<HTMLElement>('[data-log]')!;
+    log.innerHTML = '';
+    const paso = reducido ? 80 : 520;
+    lineas.forEach(([accion, resultado], n) =>
+      setTimeout(() => {
+        const li = document.createElement('li');
+        li.innerHTML = `<b>✓</b> <span>${escapar(accion)}…</span> <em>${escapar(resultado)}</em>`;
+        log.append(li);
+      }, paso * (n + 1)),
+    );
+    setTimeout(() => resultado(), paso * (lineas.length + 1.6));
+  }
+
+  function resultado() {
+    const d = leer();
+    raiz.dataset.fase = 'listo';
+    mostrar(pantallaListo);
+    lienzoPaso.textContent = 'completado';
+    lienzoTitulo.textContent = '¡Tu proyecto está listo!';
+    pintarLienzo();
+
+    const nombre = primerNombre(d);
+    pantallaListo.querySelector<HTMLElement>('[data-titulo-final]')!.textContent = `${nombre}, tu proyecto está listo`;
+    escribirBurbuja(
+      pantallaListo.querySelector<HTMLElement>('[data-burbuja-final]')!,
+      'Revisa el resumen y envíamelo por WhatsApp. Con esto preparo tu proforma a medida.',
+    );
+
+    const iconos: Record<string, string> = Object.fromEntries(
+      [...document.querySelectorAll<HTMLElement>('[data-nodo]')].map((n) => [n.dataset.nodo!, n.querySelector('svg')!.outerHTML]),
+    );
+    pantallaListo.querySelector<HTMLElement>('[data-res-soluciones]')!.innerHTML = d.soluciones
+      .map((s) => `<div><span>${iconos[s] ?? ''}</span><strong>${escapar(texto(SOLUCIONES, s))}</strong></div>`)
+      .join('');
+
+    const chips = (ids: string[], lista: Lista) =>
+      ids.length ? ids.map((x) => `<span>${escapar(texto(lista, x))}</span>`).join('') : '<span>Por definir juntos</span>';
+    pantallaListo.querySelector<HTMLElement>('[data-res-funciones]')!.innerHTML = chips(d.funciones, FUNCIONES);
+
+    const stack = [...new Set(SOLUCIONES.filter((s) => d.soluciones.includes(s.id)).flatMap((s) => s.stack))];
+    pantallaListo.querySelector<HTMLElement>('[data-res-stack]')!.innerHTML = stack.map((s) => `<span>${s}</span>`).join('');
+
+    const datos: [string, string][] = [
+      ['Negocio', d.negocio ? texto(NEGOCIOS, d.negocio) : '—'],
+      ['Usuarios', usuariosTexto(d) || '—'],
+      ['Plazo', d.plazo ? texto(PLAZOS, d.plazo) : 'Por definir'],
+      ['Inversión', d.presupuesto || 'Por definir'],
+    ];
+    pantallaListo.querySelector<HTMLElement>('[data-res-datos]')!.innerHTML = datos
+      .map(([k, v]) => `<div><dt>${k}</dt><dd>${escapar(v)}</dd></div>`)
+      .join('');
+
+    const a = alcance(d);
+    pantallaListo.querySelector<HTMLElement>('[data-alcance]')!.innerHTML =
+      `alcance <i>${[1, 2, 3].map((n) => `<b class="${n <= a.nivel ? 'on' : ''}"></b>`).join('')}</i> ${a.texto}`;
+
+    pantallaListo.querySelector<HTMLElement>('[data-mensaje]')!.innerHTML = escapar(construirMensaje(d)).replace(
+      /\*([^*\n]+)\*/g,
+      '<b>$1</b>',
+    );
+
+    confeti();
+    pantallaListo.querySelector<HTMLElement>('[data-titulo-final]')!.focus({ preventScroll: true });
+    scrollTo({ top: 0, behavior: reducido ? 'auto' : 'smooth' });
+  }
+
+  function confeti() {
+    if (reducido) return;
+    const capa = pantallaListo.querySelector<HTMLElement>('[data-confeti]')!;
+    const colores = ['#c6f432', '#5b4bff', '#9a90ff', '#25d366'];
+    capa.innerHTML = Array.from({ length: 36 }, () => {
+      const estilo = [
+        `--x:${Math.random() * 100}%`,
+        `--t:${6 + Math.random() * 8}px`,
+        `--c:${colores[Math.floor(Math.random() * colores.length)]}`,
+        `--d:${1.2 + Math.random() * 1.2}s`,
+        `--dx:${(Math.random() - 0.5) * 160}px`,
+        `--r:${(Math.random() - 0.5) * 540}deg`,
+      ].join(';');
+      return `<i style="${estilo}"></i>`;
+    }).join('');
+    setTimeout(() => (capa.innerHTML = ''), 2600);
+  }
+
+  raiz.querySelector('[data-empezar]')!.addEventListener('click', () => ir(0));
+  btnSiguiente.addEventListener('click', siguiente);
+  btnAtras.addEventListener('click', () => ir(actual - 1, true));
+  btnOmitir.addEventListener('click', omitir);
+  form.addEventListener('submit', (e) => e.preventDefault());
+
+  form.addEventListener('change', (e) => {
+    const input = e.target as HTMLInputElement;
+    if (input.checked) pasos[actual]?.querySelector<HTMLElement>('[data-error]')!.replaceChildren();
+    if (input.name === 'asesoria') actualizarRango();
+    pintarLienzo();
+    if (input.type === 'radio' && PASOS[actual]?.tipo === 'unica') {
+      setTimeout(() => {
+        if (PASOS[actual]?.id === input.name) siguiente();
+      }, reducido ? 0 : 380);
+    }
+  });
+
+  form.addEventListener('input', (e) => {
+    const t = e.target as HTMLInputElement;
+    if (t.type === 'range') {
+      asesoria.checked = false;
+      actualizarRango();
+    }
+    if (t.name === 'nombre') pintarLienzo();
+  });
+
+  form.addEventListener('click', (e) => {
+    const chip = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-agregar]');
+    if (!chip) return;
+    const area = form.querySelector<HTMLTextAreaElement>('textarea[name="detalles"]')!;
+    area.value = [area.value.trim(), chip.dataset.agregar].filter(Boolean).join('. ');
+    chip.classList.add('usada');
+    area.focus();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    const t = e.target as HTMLElement;
+    const esTexto = t.matches('textarea, input[type="text"], input[type="range"]');
+    const escribiendo = t.matches('textarea, input[type="text"]:not([name="nombre"])');
+    const fase = raiz.dataset.fase;
+
+    if (e.key === 'Enter' && !e.shiftKey && !escribiendo && !t.closest('a, button, summary')) {
+      if (fase === 'inicio') {
+        e.preventDefault();
+        ir(0);
+      } else if (fase === 'pasos') {
+        e.preventDefault();
+        siguiente();
+      }
+      return;
+    }
+
+    if (fase === 'pasos' && /^[1-9]$/.test(e.key) && !esTexto) {
+      const inputs = [...pasos[actual].querySelectorAll<HTMLInputElement>('.tarjeta input')].filter(
+        (x) => !x.closest('[hidden]'),
+      );
+      const input = inputs[Number(e.key) - 1];
+      if (!input) return;
+      input.checked = input.type === 'radio' ? true : !input.checked;
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  });
+
+  raiz.querySelector('[data-enviar]')!.addEventListener('click', () => abrirWhatsApp(construirMensaje(leer())));
+
+  const btnCopiar = raiz.querySelector<HTMLButtonElement>('[data-copiar]')!;
+  btnCopiar.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(construirMensaje(leer()));
+      btnCopiar.textContent = '¡Copiado!';
+    } catch {
+      btnCopiar.textContent = 'No se pudo copiar';
+    }
+    setTimeout(() => (btnCopiar.textContent = 'Copiar mensaje'), 1800);
+  });
+
+  raiz.querySelector('[data-revisar]')!.addEventListener('click', () => ir(1, true));
+
+  actualizarUI();
+</script>
