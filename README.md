@@ -7,7 +7,7 @@ Está hecho con [Astro](https://astro.build): el resultado es HTML y CSS estáti
 
 ## Requisitos
 
-- Node.js 20 o superior
+- Node.js 24 (Astro 7 pide 22.23.4 o superior; Vercel usa 24.x según `package.json`)
 - npm
 
 ## Comandos
