@@ -246,6 +246,12 @@ const enConstruccion = PROYECTOS.length === 0;
     margin-top: 32px;
   }
 
+  @media (max-width: 480px) {
+    .obra__acciones :global(.btn) {
+      flex: 1 1 100%;
+    }
+  }
+
   @keyframes cargar {
     from {
       transform: translateX(-100%);

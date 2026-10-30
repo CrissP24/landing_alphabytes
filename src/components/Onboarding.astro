@@ -1566,6 +1566,22 @@ const sugerenciasExtras = [
     }
   }
 
+  @media (max-height: 500px) {
+    .escena__barra {
+      padding-block: 8px;
+    }
+
+    .escena__cuerpo {
+      align-items: start;
+      padding-block: 16px 24px;
+    }
+
+    .escena__pie,
+    .pantalla__acciones--final {
+      padding-block: 8px calc(8px + env(safe-area-inset-bottom));
+    }
+  }
+
   @media (min-width: 640px) {
     .tarjetas:not(.tarjetas--chips) {
       grid-template-columns: repeat(2, 1fr);

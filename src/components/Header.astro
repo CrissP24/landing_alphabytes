@@ -203,6 +203,7 @@ const enlaces = [
     padding: 24px var(--gutter) 32px;
     background: var(--bg);
     overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .movil[hidden] {
@@ -254,6 +255,18 @@ const enlaces = [
     font-size: 13px;
     font-weight: 500;
     color: var(--acento);
+  }
+
+  @media (max-height: 520px) {
+    .movil {
+      gap: 20px;
+      padding-block: 8px 20px;
+    }
+
+    .movil__enlace {
+      padding: 8px 0;
+      font-size: 22px;
+    }
   }
 
   @media (min-width: 560px) {

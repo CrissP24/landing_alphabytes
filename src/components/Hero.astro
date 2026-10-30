@@ -160,6 +160,7 @@ const codigo = [
   .hero__fila {
     position: relative;
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 64px;
     align-items: center;
   }
@@ -639,6 +640,12 @@ const codigo = [
     }
   }
 
+  @media (max-width: 1023px) {
+    .aviso-deploy {
+      left: calc(16px - var(--gutter));
+    }
+  }
+
   @media (max-width: 520px) {
     .hero__sep,
     .hero__chip > span:last-child {
@@ -647,6 +654,10 @@ const codigo = [
   }
 
   @media (max-width: 480px) {
+    .hero__botones :global(.btn) {
+      flex: 1 1 auto;
+    }
+
     .editor__codigo {
       font-size: 11.5px;
     }
@@ -662,6 +673,26 @@ const codigo = [
 
     .aviso-deploy {
       left: 12px;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .hero__chip {
+      gap: 8px;
+      padding-right: 12px;
+    }
+
+    .hero__chip .mono {
+      letter-spacing: 0.04em;
+    }
+
+    .editor__codigo {
+      padding-left: 40px;
+      font-size: 10.5px;
+    }
+
+    .editor__codigo li::before {
+      left: -30px;
     }
   }
 
@@ -683,7 +714,7 @@ const codigo = [
 
   @media (min-width: 1024px) {
     .hero__fila {
-      grid-template-columns: 1.05fr 0.95fr;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
       gap: 56px;
     }
 

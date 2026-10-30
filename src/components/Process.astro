@@ -122,6 +122,16 @@ import { PROCESO } from '../data/site';
     color: var(--titulo);
   }
 
+  @media (max-width: 480px) {
+    .proceso__cta {
+      padding: 20px;
+    }
+
+    .proceso__cta :global(.btn) {
+      flex: 1 1 auto;
+    }
+  }
+
   @media (min-width: 1024px) {
     .linea {
       grid-template-columns: repeat(5, 1fr);
