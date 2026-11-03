@@ -1,7 +1,7 @@
 ---
 import Icon from './Icon.astro';
+import Consentimiento from './Consentimiento.astro';
 import { SITE, SERVICIOS_SOFTWARE, SERVICIOS_TI, PRESUPUESTOS } from '../data/site';
-import { asset } from '../lib/url';
 
 const mailto = `mailto:${SITE.correo}?subject=${encodeURIComponent(SITE.asuntoCorreo)}`;
 
@@ -75,12 +75,13 @@ const datos = [
         <p class="campo__error" id="e-mensaje" aria-live="polite"></p>
       </div>
 
+      <Consentimiento id="f-acepta" error="e-acepta" />
+
       <button type="submit" class="btn btn--wa btn--bloque">
         <Icon name="whatsapp" size={20} /> Enviar por WhatsApp
       </button>
       <p class="form__nota">
         Se abrirá WhatsApp con tu mensaje; tú decides si lo envías. Usamos tus datos solo para responder tu consulta.
-        Más información en nuestra <a href={asset('privacidad')}>Política de privacidad</a>.
       </p>
     </form>
   </div>
@@ -237,12 +238,6 @@ const datos = [
     display: none;
   }
 
-  .form__nota a {
-    color: var(--acento);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-
   .form__nota {
     margin-top: -6px;
     font-size: 13.5px;
@@ -261,6 +256,7 @@ const datos = [
 
 <script>
   import { abrirWhatsApp } from '../scripts/whatsapp';
+  import { CONSENTIMIENTO } from '../data/site';
 
   const form = document.getElementById('form-contacto') as HTMLFormElement;
 
@@ -268,6 +264,7 @@ const datos = [
     nombre: 'Escribe tu nombre (mínimo 2 letras).',
     servicio: 'Elige el servicio que te interesa.',
     mensaje: 'Cuéntanos un poco más (mínimo 10 caracteres).',
+    acepta: CONSENTIMIENTO.error,
   };
 
   function validar(campo: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
@@ -282,7 +279,7 @@ const datos = [
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const campos = [form.nombre, form.servicio, form.mensaje];
+    const campos = [form.nombre, form.servicio, form.mensaje, form.acepta];
     const invalidos = campos.filter((c) => !validar(c));
     if (invalidos.length) {
       invalidos[0].focus();
@@ -291,7 +288,7 @@ const datos = [
 
     const d = Object.fromEntries(new FormData(form)) as Record<string, string>;
     abrirWhatsApp(
-      `Hola AlphaBytes, soy ${d.nombre.trim()}. Me interesa: ${d.servicio}. Presupuesto: ${d.presupuesto || 'Por definir'}. Detalles: ${d.mensaje.trim()}`,
+      `Hola AlphaBytes, soy ${d.nombre.trim()}. Me interesa: ${d.servicio}. Presupuesto: ${d.presupuesto || 'Por definir'}. Detalles: ${d.mensaje.trim()}\n\n${CONSENTIMIENTO.aceptacion}`,
     );
   });
 

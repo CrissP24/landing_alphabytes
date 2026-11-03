@@ -1,6 +1,7 @@
 ---
 import Icon from './Icon.astro';
 import ThemeToggle from './ThemeToggle.astro';
+import Consentimiento from './Consentimiento.astro';
 import { asset } from '../lib/url';
 import { PASOS, SOLUCIONES, PRESUPUESTOS_COTIZADOR } from '../data/cotizador';
 
@@ -249,6 +250,10 @@ const sugerenciasExtras = [
           <pre class="mensaje__burbuja" data-mensaje></pre>
         </details>
 
+        <div class="pantalla__consentimiento">
+          <Consentimiento id="ob-acepta" error="ob-acepta-error" />
+        </div>
+
         <div class="pantalla__acciones pantalla__acciones--final">
           <button type="button" class="btn btn--wa btn--grande" data-enviar>
             <Icon name="whatsapp" size={20} /> Enviar por WhatsApp
@@ -257,8 +262,7 @@ const sugerenciasExtras = [
           <button type="button" class="enlace-sutil" data-revisar>Revisar mis respuestas</button>
         </div>
         <p class="pantalla__legal">
-          Se abrirá WhatsApp con el mensaje listo; tú decides si lo envías. Usamos tus datos solo para preparar tu proforma ·
-          <a href={asset('privacidad')}>Privacidad</a>
+          Se abrirá WhatsApp con el mensaje listo; tú decides si lo envías. Usamos tus datos solo para preparar tu proforma.
         </p>
       </div>
     </div>
@@ -1433,16 +1437,14 @@ const sugerenciasExtras = [
     backdrop-filter: blur(10px);
   }
 
+  .pantalla__consentimiento {
+    margin-top: 16px;
+  }
+
   .pantalla__legal {
     margin-top: 18px;
     font-size: 13px;
     color: var(--texto-3);
-  }
-
-  .pantalla__legal a {
-    color: var(--acento);
-    text-decoration: underline;
-    text-underline-offset: 2px;
   }
 
   .confeti {
@@ -1634,6 +1636,7 @@ const sugerenciasExtras = [
 
 <script>
   import { abrirWhatsApp } from '../scripts/whatsapp';
+  import { CONSENTIMIENTO } from '../data/site';
   import {
     PASOS,
     NEGOCIOS,
@@ -1653,6 +1656,8 @@ const sugerenciasExtras = [
   const pantallaInicio = raiz.querySelector<HTMLElement>('[data-pantalla="inicio"]')!;
   const pantallaAnalisis = raiz.querySelector<HTMLElement>('[data-pantalla="analizando"]')!;
   const pantallaListo = raiz.querySelector<HTMLElement>('[data-pantalla="listo"]')!;
+  const casillaDatos = document.getElementById('ob-acepta') as HTMLInputElement;
+  const errorDatos = document.getElementById('ob-acepta-error')!;
   const pie = raiz.querySelector<HTMLElement>('[data-pie]')!;
   const btnAtras = raiz.querySelector<HTMLButtonElement>('[data-atras]')!;
   const btnSiguiente = raiz.querySelector<HTMLButtonElement>('[data-siguiente]')!;
@@ -1985,7 +1990,21 @@ const sugerenciasExtras = [
     add('Alcance estimado', alcance(d).texto);
     add('Detalles', d.detalles);
     l.push('', '¿Me pueden preparar una proforma?');
+    if (casillaDatos.checked) l.push('', CONSENTIMIENTO.aceptacion);
     return l.join('\n');
+  }
+
+  function pintarMensaje(d: Datos) {
+    pantallaListo.querySelector<HTMLElement>('[data-mensaje]')!.innerHTML = escapar(construirMensaje(d)).replace(
+      /\*([^*\n]+)\*/g,
+      '<b>$1</b>',
+    );
+  }
+
+  function aceptaDatos() {
+    casillaDatos.setAttribute('aria-invalid', String(!casillaDatos.checked));
+    errorDatos.textContent = casillaDatos.checked ? '' : CONSENTIMIENTO.error;
+    return casillaDatos.checked;
   }
 
   function analizar() {
@@ -2063,10 +2082,7 @@ const sugerenciasExtras = [
     pantallaListo.querySelector<HTMLElement>('[data-alcance]')!.innerHTML =
       `alcance <i>${[1, 2, 3].map((n) => `<b class="${n <= a.nivel ? 'on' : ''}"></b>`).join('')}</i> ${a.texto}`;
 
-    pantallaListo.querySelector<HTMLElement>('[data-mensaje]')!.innerHTML = escapar(construirMensaje(d)).replace(
-      /\*([^*\n]+)\*/g,
-      '<b>$1</b>',
-    );
+    pintarMensaje(d);
 
     confeti();
     pantallaListo.querySelector<HTMLElement>('[data-titulo-final]')!.focus({ preventScroll: true });
@@ -2155,7 +2171,19 @@ const sugerenciasExtras = [
     }
   });
 
-  raiz.querySelector('[data-enviar]')!.addEventListener('click', () => abrirWhatsApp(construirMensaje(leer())));
+  casillaDatos.addEventListener('change', () => {
+    if (casillaDatos.getAttribute('aria-invalid') === 'true') aceptaDatos();
+    pintarMensaje(leer());
+  });
+
+  raiz.querySelector('[data-enviar]')!.addEventListener('click', () => {
+    if (!aceptaDatos()) {
+      casillaDatos.focus({ preventScroll: true });
+      casillaDatos.scrollIntoView({ block: 'center', behavior: reducido ? 'auto' : 'smooth' });
+      return;
+    }
+    abrirWhatsApp(construirMensaje(leer()));
+  });
 
   const btnCopiar = raiz.querySelector<HTMLButtonElement>('[data-copiar]')!;
   btnCopiar.addEventListener('click', async () => {

@@ -46,6 +46,11 @@ export const MENSAJES: Record<string, string> = {
   demo: 'Hola AlphaBytes, me gustaría ver una demo del proyecto [NOMBRE]. ¿Cuándo podemos coordinar?',
 };
 
+export const CONSENTIMIENTO = {
+  aceptacion: 'Acepto el tratamiento de mis datos según la política de privacidad.',
+  error: 'Para enviar, acepta el tratamiento de tus datos.',
+};
+
 export const waLink = (mensaje: string) =>
   `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(mensaje)}`;
 

@@ -1,0 +1,85 @@
+---
+import { asset } from '../lib/url';
+
+interface Props {
+  id: string;
+  error: string;
+}
+
+const { id, error } = Astro.props;
+---
+
+<div class="consentimiento">
+  <p class="consentimiento__aviso">
+    Tus datos serán tratados conforme a la <a href={asset('privacidad#base-legal')} target="_blank" rel="noopener">Ley Orgánica de Protección de Datos Personales</a>.
+  </p>
+  <label class="consentimiento__casilla" for={id}>
+    <input id={id} name="acepta" type="checkbox" required autocomplete="off" aria-describedby={error} />
+    <span>Acepto el tratamiento de mis datos según la <a href={asset('privacidad')} target="_blank" rel="noopener">política de privacidad</a>.</span>
+  </label>
+  <p class="consentimiento__error" id={error} aria-live="polite"></p>
+</div>
+
+<style>
+  .consentimiento {
+    display: grid;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-s);
+    background: color-mix(in srgb, var(--indigo) 8%, transparent);
+    font-size: 14.5px;
+    line-height: 1.5;
+  }
+
+  .consentimiento__aviso {
+    color: var(--texto-2);
+  }
+
+  .consentimiento a {
+    color: var(--acento);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .consentimiento__casilla {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: var(--titulo);
+    cursor: pointer;
+  }
+
+  input {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    margin: 0;
+    border: 1.5px solid var(--borde-fuerte);
+    border-radius: 6px;
+    background: var(--bg-2);
+    appearance: none;
+    cursor: pointer;
+    transition:
+      border-color 0.2s,
+      background-color 0.2s;
+  }
+
+  input:checked {
+    border-color: var(--indigo);
+    background: var(--indigo) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center no-repeat;
+  }
+
+  input[aria-invalid='true'] {
+    border-color: #ef4444;
+  }
+
+  .consentimiento__error {
+    font-size: 14px;
+    color: #ef4444;
+  }
+
+  .consentimiento__error:empty {
+    display: none;
+  }
+</style>
